@@ -67,14 +67,8 @@
                 <p class="text-gray-500">Fill in the details below to generate a quotation.</p>
             </div>
             <div class="flex gap-2">
-                <button onclick="addRow()" class="py-2 px-4 bg-main text-white font-semibold rounded-lg shadow-md hover:bg-opacity-90 transition duration-300">
-                    <i class="fas fa-plus mr-2"></i>Add Item
-                </button>
-                <button onclick="clearQuotation()" class="py-2 px-4 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 transition duration-300">
-                    <i class="fas fa-trash mr-2"></i>Clear All
-                </button>
                  <button onclick="window.print()" class="py-2 px-4 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 transition duration-300">
-                    <i class="fas fa-print mr-2"></i>Print
+                    <i class="fas fa-download mr-2"></i>Print
                 </button>
             </div>
         </div>
@@ -89,16 +83,16 @@
                     <div class="flex items-center justify-center h-24 w-48 bg-faded text-gray-400 rounded-lg mb-4">
                         <span class="italic">Your Logo Here</span>
                     </div>
-                    <h2 class="text-xl font-bold text-main mb-1">Pixel Crafte Inc.</h2>
+                    <h2 class="text-xl font-bold text-main mb-1">Pixel Crafte</h2>
                     <p class="text-gray-600">123 Creative Lane<br>Design City, DC 12345</p>
-                    <p class="text-gray-600">contact@pixelcrafte.com</p>
+                    <p class="text-gray-600">billing@pixelcrafte.co.zw</p>
                 </div>
                 <!-- Quotation Title and Details -->
                 <div class="w-1/2 text-right">
                     <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-2">QUOTATION</h1>
                     <div class="grid grid-cols-2 gap-x-4">
                         <span class="font-semibold text-gray-600">Quote #</span>
-                        <input type="text" placeholder="QUO-001" class="p-1 border rounded text-right">
+                        <input type="text" placeholder="QUO-2025-001" class="p-1 border rounded text-right">
                         <span class="font-semibold text-gray-600">Date</span>
                         <input type="date" class="p-1 border rounded text-right">
                         <span class="font-semibold text-gray-600">Expiry Date</span>
@@ -149,6 +143,14 @@
                         </tr>
                     </tbody>
                 </table>
+                <div class="w-full flex justify-end my-4 gap-2">
+                    <button onclick="clearQuotation()" class="py-2 px-4 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 transition duration-300">
+                    <i class="fas fa-trash mr-2"></i>Clear All
+                    </button>
+                    <button onclick="addRow()" class="py-2 px-4 bg-main text-white font-semibold rounded-lg shadow-md hover:bg-opacity-90 transition duration-300">
+                        <i class="fas fa-plus mr-2"></i>Add Item
+                    </button>
+                </div>
             </section>
 
             <!-- Quotation Totals -->
