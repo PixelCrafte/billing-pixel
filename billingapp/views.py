@@ -6,3 +6,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 class HomeView(View):
     def get(self, request):
         return render(request, "billingapp/home.html")
+
+class LoginView(View):
+    def get(self, request):
+        return render(request, "billingapp/login.html")
