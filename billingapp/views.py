@@ -10,3 +10,8 @@ class HomeView(View):
 class LoginView(View):
     def get(self, request):
         return render(request, "billingapp/login.html")
+
+class SignUpView(View):
+    def get(self, request):
+        return render(request, "billingapp/signup.html")
+    

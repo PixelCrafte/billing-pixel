@@ -6,15 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'billingapp/css/auth.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <title>Sign In - Billing Pixel</title>
+    <title>Sign Up - Pixel Crafte Billing</title>
 </head>
 <body class="body">
-<!-- Login Form --> 
+<!-- From Uiverse.io by zanina-yassine --> 
 <form class="form_container">
   <div class="logo_container"></div>
   <div class="title_container">
-    <p class="title">Welcome Back</p>
-    <span class="subtitle">Sign in to your Billing Pixel account to manage your invoices and billing.</span>
+    <p class="title">Create Your Account</p>
+    <span class="subtitle">Join Pixel Crafte Billing and streamline your invoicing process today.</span>
   </div>
   <br>
   <div class="input_container">
@@ -27,13 +27,8 @@
     <i class="fas fa-lock icon"></i>
     <input placeholder="Password" title="Password" name="password" type="password" class="input_field" id="password_field">
   </div>
-  
-  <div class="forgot_password">
-    <a href="#">Forgot your password?</a>
-  </div>
-  
-  <button title="Sign In" type="submit" class="sign-in_btn">
-    <span>Sign In</span>
+  <button title="Sign Up" type="submit" class="sign-in_btn">
+    <span>Create Account</span>
   </button>
 
   <div class="separator">
@@ -41,13 +36,13 @@
     <span>Or</span>
     <hr class="line">
   </div>
-  <button title="Sign In with Google" type="button" class="sign-in_ggl">
+  <button title="Sign Up with Google" type="button" class="sign-in_ggl">
     <i class="fab fa-google"></i>
-    <span>Sign In with Google</span>
+    <span>Sign Up with Google</span>
   </button>
   <p class="note">
     <a href="#">Terms of use & Conditions</a> | 
-    <a href="{% url 'billingapp:signup' %}">Don't have an account? Sign up</a>
+    <a href="{% url 'billingapp:login' %}">Already have an account? Sign in</a>
   </p>
 </form>
 </body>

@@ -6,4 +6,5 @@ app_name = 'billingapp'
 urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
     path('login/', views.LoginView.as_view(), name='login'),
+    path('signup/', views.SignUpView.as_view(), name='signup'),
 ]
