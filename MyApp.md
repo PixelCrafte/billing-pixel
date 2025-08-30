@@ -1,10 +1,3 @@
-
-You are an expert full-stack engineer and DevOps specialist. Build a production-ready, minimal viable product (MVP) for a SaaS invoicing/quoting/receipting product called **Pixel Crafte Billing**. The user/company running this service is **Pixel Crafte** (a web design, graphic design & Software Development studio). This MVP should be conservative on resources so it can run on a cheap VPS (1–2 vCPU, 2–4GB RAM) and later be easy to scale.
-
-Below are the complete requirements. Produce a Git repository (or repo structure), runnable instructions, code, tests, configuration, and deployment docs. Provide concise explanations for any architectural choices you make.
-
----
-
 # 1 — Goal
 
 Deliver a Django-based web application (server-rendered templates + Postgres) that enables companies to:
