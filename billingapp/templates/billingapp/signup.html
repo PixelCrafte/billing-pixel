@@ -6,27 +6,141 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'billingapp/css/auth.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <title>Sign Up - Pixel Crafte Billing</title>
+    <title>Sign Up - Billing Pixel</title>
 </head>
 <body class="body">
-<!-- From Uiverse.io by zanina-yassine --> 
-<form class="form_container">
+<form class="form_container" method="post">
+  {% csrf_token %}
+  
+  <!-- Display form errors -->
+  {% if form.non_field_errors %}
+    <div class="error_messages">
+      {% for error in form.non_field_errors %}
+        <p class="error">{{ error }}</p>d
+      {% endfor %}
+    </div>
+  {% endif %}
+  
   <div class="logo_container"></div>
   <div class="title_container">
     <p class="title">Create Your Account</p>
-    <span class="subtitle">Join Pixel Crafte Billing and streamline your invoicing process today.</span>
+    <span class="subtitle">Join Billing Pixel and streamline your invoicing process today.</span>
   </div>
   <br>
+  
+  <!-- Username Field -->
   <div class="input_container">
-    <label class="input_label" for="email_field">Email</label>
+    <label class="input_label" for="{{ form.username.id_for_label }}">Username</label>
+    <i class="fas fa-user icon"></i>
+    {{ form.username }}
+    {% if form.username.errors %}
+      <div class="field_errors">
+        {% for error in form.username.errors %}
+          <p class="error">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+  
+  <!-- First Name Field -->
+  <div class="input_container">
+    <label class="input_label" for="{{ form.first_name.id_for_label }}">First Name</label>
+    <i class="fas fa-user icon"></i>
+    {{ form.first_name }}
+    {% if form.first_name.errors %}
+      <div class="field_errors">
+        {% for error in form.first_name.errors %}
+          <p class="error">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+  
+  <!-- Last Name Field -->
+  <div class="input_container">
+    <label class="input_label" for="{{ form.last_name.id_for_label }}">Last Name</label>
+    <i class="fas fa-user icon"></i>
+    {{ form.last_name }}
+    {% if form.last_name.errors %}
+      <div class="field_errors">
+        {% for error in form.last_name.errors %}
+          <p class="error">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+  
+  <!-- Email Field -->
+  <div class="input_container">
+    <label class="input_label" for="{{ form.email.id_for_label }}">Email</label>
     <i class="fas fa-envelope icon"></i>
-    <input placeholder="name@mail.com" title="Email address" name="email" type="email" class="input_field" id="email_field">
+    {{ form.email }}
+    {% if form.email.errors %}
+      <div class="field_errors">
+        {% for error in form.email.errors %}
+          <p class="error">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
   </div>
+  
+  <!-- Company Name Field (Optional) -->
   <div class="input_container">
-    <label class="input_label" for="password_field">Password</label>
-    <i class="fas fa-lock icon"></i>
-    <input placeholder="Password" title="Password" name="password" type="password" class="input_field" id="password_field">
+    <label class="input_label" for="{{ form.company_name.id_for_label }}">Company Name (Optional)</label>
+    <i class="fas fa-building icon"></i>
+    {{ form.company_name }}
+    {% if form.company_name.errors %}
+      <div class="field_errors">
+        {% for error in form.company_name.errors %}
+          <p class="error">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
   </div>
+  
+  <!-- Password Field -->
+  <div class="input_container">
+    <label class="input_label" for="{{ form.password1.id_for_label }}">Password</label>
+    <i class="fas fa-lock icon"></i>
+    {{ form.password1 }}
+    {% if form.password1.errors %}
+      <div class="field_errors">
+        {% for error in form.password1.errors %}
+          <p class="error">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+  
+  <!-- Confirm Password Field -->
+  <div class="input_container">
+    <label class="input_label" for="{{ form.password2.id_for_label }}">Confirm Password</label>
+    <i class="fas fa-lock icon"></i>
+    {{ form.password2 }}
+    {% if form.password2.errors %}
+      <div class="field_errors">
+        {% for error in form.password2.errors %}
+          <p class="error">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+  
+  <!-- Terms and Conditions -->
+  <div class="checkbox_container">
+    {{ form.agree_to_terms }}
+    <label for="{{ form.agree_to_terms.id_for_label }}" class="checkbox_label">
+      I agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Privacy Policy</a>
+    </label>
+    {% if form.agree_to_terms.errors %}
+      <div class="field_errors">
+        {% for error in form.agree_to_terms.errors %}
+          <p class="error">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+  
   <button title="Sign Up" type="submit" class="sign-in_btn">
     <span>Create Account</span>
   </button>
