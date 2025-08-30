@@ -38,4 +38,28 @@ class SignUpView(View):
         else:
             # Form has errors, re-render with errors
             return render(request, "billingapp/signup.html", {'form': form})
+
+
+class ForgotPasswordView(View):
+    def get(self, request):
+        return render(request, "billingapp/forgot-password.html")
+    
+    def post(self, request):
+        # For now, just render the template with a success message
+        # In a real implementation, you'd send an email here
+        email = request.POST.get('email')
+        if email:
+            messages.success(request, f'If an account with {email} exists, we\'ve sent a password reset link.')
+        return render(request, "billingapp/forgot-password.html")
+
+
+class ChangePasswordView(View):
+    def get(self, request):
+        return render(request, "billingapp/change-password.html")
+    
+    def post(self, request):
+        # For now, just render the template with a success message
+        # In a real implementation, you'd validate and change the password
+        messages.success(request, 'Your password has been changed successfully!')
+        return render(request, "billingapp/change-password.html")
     

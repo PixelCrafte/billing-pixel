@@ -299,6 +299,74 @@
   text-decoration: underline;
 }
 
+/* Auth links styling */
+.auth_links {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 8px 0;
+}
+
+.auth_link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6740E1;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.auth_link:hover {
+  color: #B6B3FD;
+  background-color: #F7FAFC;
+}
+
+.auth_link i {
+  font-size: 14px;
+}
+
+/* Password requirements styling */
+.password_requirements {
+  width: 100%;
+  background-color: #F7FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+}
+
+.requirements_title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #4A5568;
+  margin: 0 0 8px 0;
+}
+
+.requirements_list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.requirements_list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: #718096;
+  margin: 4px 0;
+}
+
+.requirements_list li i {
+  color: #38A169;
+  font-size: 10px;
+  width: 12px;
+}
+
 /* Responsive design */
 @media (max-width: 480px) {
   .body {
