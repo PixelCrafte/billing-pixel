@@ -118,4 +118,18 @@ class ChangePasswordView(View):
         # In a real implementation, you'd validate and change the password
         messages.success(request, 'Your password has been changed successfully!')
         return render(request, "billingapp/change-password.html")
+
+
+class ClienteleView(View):
+    def get(self, request):
+        # In a real implementation, you'd query the database for clients
+        context = {
+            'total_clients': 48,
+            'active_clients': 42,
+            'new_clients': 6,
+            'total_revenue': '287,450.00',
+            'current_month': 'September',
+            'current_year': '2025',
+        }
+        return render(request, "billingapp/clientele.html", context)
     

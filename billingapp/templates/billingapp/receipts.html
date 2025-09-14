@@ -1,0 +1,762 @@
+{% extends 'billingapp/base.html' %}
+{% load static %}
+
+{% block title %}Receipts - PixelCrafte Billing{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-6">
+    <!-- Page Header -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Receipts</h1>
+            <p class="text-gray-600 mt-1">Track and manage all payment receipts and transaction records</p>
+        </div>
+        <div class="flex gap-3">
+            <button onclick="exportReceipts()" class="btn btn-outline btn-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Export
+            </button>
+            <a href="{% url 'billingapp:receipt' %}" class="btn bg-main text-white hover:bg-main/90 btn-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                New Receipt
+            </a>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="card bg-white shadow-lg border border-gray-100">
+            <div class="card-body p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Receipts</p>
+                        <p class="text-2xl font-bold text-gray-900" id="total-receipts">{{ total_receipts|default:'0' }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-main/10 rounded-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <span class="text-sm text-gray-500">All time</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-white shadow-lg border border-gray-100">
+            <div class="card-body p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Revenue</p>
+                        <p class="text-2xl font-bold text-green-600" id="total-revenue">${{ total_revenue|default:'0.00' }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <span class="text-sm text-gray-500">Completed payments</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-white shadow-lg border border-gray-100">
+            <div class="card-body p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">This Month</p>
+                        <p class="text-2xl font-bold text-main" id="month-receipts">{{ month_receipts|default:'0' }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-main/10 rounded-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <span class="text-sm text-gray-500">{{ current_month }} {{ current_year }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-white shadow-lg border border-gray-100">
+            <div class="card-body p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Avg. Receipt</p>
+                        <p class="text-2xl font-bold text-blue-600" id="avg-receipt">${{ avg_receipt|default:'0.00' }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <span class="text-sm text-gray-500">Per transaction</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="card bg-white shadow-lg border border-gray-100">
+        <div class="card-body p-6">
+            <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
+                <!-- Search Input -->
+                <div class="flex-1">
+                    <div class="form-control">
+                        <div class="input-group">
+                            <input type="text" 
+                                   id="searchInput"
+                                   placeholder="Search by receipt number, client name, or transaction ID..." 
+                                   class="input input-bordered w-full focus:border-main focus:ring-2 focus:ring-main/20">
+                            <button class="btn btn-square" onclick="performSearch()">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method Filter -->
+                <div class="form-control">
+                    <select id="paymentMethodFilter" class="select select-bordered focus:border-main focus:ring-2 focus:ring-main/20" onchange="applyFilters()">
+                        <option value="">All Methods</option>
+                        <option value="credit_card">Credit Card</option>
+                        <option value="debit_card">Debit Card</option>
+                        <option value="bank_transfer">Bank Transfer</option>
+                        <option value="paypal">PayPal</option>
+                        <option value="stripe">Stripe</option>
+                        <option value="cash">Cash</option>
+                        <option value="check">Check</option>
+                    </select>
+                </div>
+
+                <!-- Status Filter -->
+                <div class="form-control">
+                    <select id="statusFilter" class="select select-bordered focus:border-main focus:ring-2 focus:ring-main/20" onchange="applyFilters()">
+                        <option value="">All Status</option>
+                        <option value="issued">Issued</option>
+                        <option value="sent">Sent</option>
+                        <option value="downloaded">Downloaded</option>
+                        <option value="printed">Printed</option>
+                    </select>
+                </div>
+
+                <!-- Date Filter -->
+                <div class="form-control">
+                    <select id="dateFilter" class="select select-bordered focus:border-main focus:ring-2 focus:ring-main/20" onchange="applyFilters()">
+                        <option value="">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="quarter">This Quarter</option>
+                        <option value="year">This Year</option>
+                    </select>
+                </div>
+
+                <!-- Amount Filter -->
+                <div class="form-control">
+                    <select id="amountFilter" class="select select-bordered focus:border-main focus:ring-2 focus:ring-main/20" onchange="applyFilters()">
+                        <option value="">All Amounts</option>
+                        <option value="0-500">$0 - $500</option>
+                        <option value="500-1000">$500 - $1,000</option>
+                        <option value="1000-5000">$1,000 - $5,000</option>
+                        <option value="5000+">$5,000+</option>
+                    </select>
+                </div>
+
+                <!-- Clear Filters -->
+                <button onclick="clearFilters()" class="btn btn-outline btn-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Clear
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipts Table -->
+    <div class="card bg-white shadow-lg border border-gray-100">
+        <div class="card-body p-0">
+            <!-- Table Header -->
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-800">Recent Receipts</h3>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-600">Show:</span>
+                        <select id="entriesPerPage" class="select select-bordered select-sm" onchange="changeEntriesPerPage()">
+                            <option value="10">10</option>
+                            <option value="25" selected>25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <span class="text-sm text-gray-600">entries</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto">
+                <table class="table w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="text-left p-4">
+                                <button class="flex items-center gap-1 font-semibold text-gray-700 hover:text-main" onclick="sortTable('receipt_number')">
+                                    Receipt #
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                                    </svg>
+                                </button>
+                            </th>
+                            <th class="text-left p-4">
+                                <button class="flex items-center gap-1 font-semibold text-gray-700 hover:text-main" onclick="sortTable('client')">
+                                    Client
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                                    </svg>
+                                </button>
+                            </th>
+                            <th class="text-left p-4">
+                                <button class="flex items-center gap-1 font-semibold text-gray-700 hover:text-main" onclick="sortTable('payment_date')">
+                                    Payment Date
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                                    </svg>
+                                </button>
+                            </th>
+                            <th class="text-left p-4">
+                                <button class="flex items-center gap-1 font-semibold text-gray-700 hover:text-main" onclick="sortTable('payment_method')">
+                                    Payment Method
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                                    </svg>
+                                </button>
+                            </th>
+                            <th class="text-right p-4">
+                                <button class="flex items-center gap-1 font-semibold text-gray-700 hover:text-main ml-auto" onclick="sortTable('amount')">
+                                    Amount
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                                    </svg>
+                                </button>
+                            </th>
+                            <th class="text-center p-4">Status</th>
+                            <th class="text-center p-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="receiptsTableBody">
+                        <!-- Sample Data - Replace with Django template data -->
+                        <tr class="border-b border-gray-100 hover:bg-gray-50">
+                            <td class="p-4">
+                                <div class="font-medium text-gray-900">REC-2025-09-001</div>
+                                <div class="text-sm text-gray-500">INV-2025-09-001</div>
+                            </td>
+                            <td class="p-4">
+                                <div class="font-medium text-gray-900">Acme Corporation</div>
+                                <div class="text-sm text-gray-500">john@acme.com</div>
+                            </td>
+                            <td class="p-4">
+                                <div class="text-gray-900">Sep 14, 2025</div>
+                                <div class="text-sm text-gray-500">Today, 2:30 PM</div>
+                            </td>
+                            <td class="p-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-5 bg-blue-600 rounded flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-900">Credit Card</div>
+                                        <div class="text-xs text-gray-500">**** 4532</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="p-4 text-right">
+                                <div class="font-medium text-gray-900">$2,850.00</div>
+                                <div class="text-sm text-gray-500">USD</div>
+                            </td>
+                            <td class="p-4 text-center">
+                                <span class="badge badge-success badge-sm">Issued</span>
+                            </td>
+                            <td class="p-4">
+                                <div class="flex items-center justify-center gap-2">
+                                    <button class="btn btn-square btn-sm btn-outline" onclick="viewReceipt(1)" title="View">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    </button>
+                                    <button class="btn btn-square btn-sm btn-outline" onclick="downloadReceipt(1)" title="Download">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                    </button>
+                                    <div class="dropdown dropdown-end">
+                                        <button tabindex="0" class="btn btn-square btn-sm btn-outline">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                            </svg>
+                                        </button>
+                                        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-white rounded-box w-52 border">
+                                            <li><a onclick="emailReceipt(1)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                </svg>
+                                                Email Receipt
+                                            </a></li>
+                                            <li><a onclick="printReceipt(1)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                                </svg>
+                                                Print Receipt
+                                            </a></li>
+                                            <li><a onclick="duplicateReceipt(1)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                </svg>
+                                                Duplicate
+                                            </a></li>
+                                            <li><a onclick="viewInvoice(1)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                                View Invoice
+                                            </a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- PayPal Payment -->
+                        <tr class="border-b border-gray-100 hover:bg-gray-50">
+                            <td class="p-4">
+                                <div class="font-medium text-gray-900">REC-2025-09-002</div>
+                                <div class="text-sm text-gray-500">INV-2025-09-002</div>
+                            </td>
+                            <td class="p-4">
+                                <div class="font-medium text-gray-900">TechStart Inc</div>
+                                <div class="text-sm text-gray-500">sarah@techstart.io</div>
+                            </td>
+                            <td class="p-4">
+                                <div class="text-gray-900">Sep 13, 2025</div>
+                                <div class="text-sm text-gray-500">Yesterday, 4:15 PM</div>
+                            </td>
+                            <td class="p-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-5 bg-blue-500 rounded flex items-center justify-center text-white text-xs font-bold">
+                                        PP
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-900">PayPal</div>
+                                        <div class="text-xs text-gray-500">sarah@techstart.io</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="p-4 text-right">
+                                <div class="font-medium text-gray-900">$2,600.00</div>
+                                <div class="text-sm text-gray-500">USD (Partial)</div>
+                            </td>
+                            <td class="p-4 text-center">
+                                <span class="badge badge-info badge-sm">Sent</span>
+                            </td>
+                            <td class="p-4">
+                                <div class="flex items-center justify-center gap-2">
+                                    <button class="btn btn-square btn-sm btn-outline" onclick="viewReceipt(2)" title="View">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    </button>
+                                    <button class="btn btn-square btn-sm btn-outline" onclick="downloadReceipt(2)" title="Download">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                    </button>
+                                    <div class="dropdown dropdown-end">
+                                        <button tabindex="0" class="btn btn-square btn-sm btn-outline">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                            </svg>
+                                        </button>
+                                        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-white rounded-box w-52 border">
+                                            <li><a onclick="emailReceipt(2)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                </svg>
+                                                Email Receipt
+                                            </a></li>
+                                            <li><a onclick="printReceipt(2)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                                </svg>
+                                                Print Receipt
+                                            </a></li>
+                                            <li><a onclick="viewInvoice(2)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                                View Invoice
+                                            </a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Bank Transfer -->
+                        <tr class="border-b border-gray-100 hover:bg-gray-50">
+                            <td class="p-4">
+                                <div class="font-medium text-gray-900">REC-2025-09-003</div>
+                                <div class="text-sm text-gray-500">INV-2025-08-015</div>
+                            </td>
+                            <td class="p-4">
+                                <div class="font-medium text-gray-900">Global Solutions Ltd</div>
+                                <div class="text-sm text-gray-500">mike@globalsolutions.com</div>
+                            </td>
+                            <td class="p-4">
+                                <div class="text-gray-900">Sep 12, 2025</div>
+                                <div class="text-sm text-gray-500">2 days ago, 10:30 AM</div>
+                            </td>
+                            <td class="p-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-5 bg-green-600 rounded flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-900">Bank Transfer</div>
+                                        <div class="text-xs text-gray-500">ACH-202509120001</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="p-4 text-right">
+                                <div class="font-medium text-gray-900">$1,250.00</div>
+                                <div class="text-sm text-gray-500">USD</div>
+                            </td>
+                            <td class="p-4 text-center">
+                                <span class="badge badge-success badge-sm">Downloaded</span>
+                            </td>
+                            <td class="p-4">
+                                <div class="flex items-center justify-center gap-2">
+                                    <button class="btn btn-square btn-sm btn-outline" onclick="viewReceipt(3)" title="View">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    </button>
+                                    <button class="btn btn-square btn-sm btn-outline" onclick="downloadReceipt(3)" title="Download">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                    </button>
+                                    <div class="dropdown dropdown-end">
+                                        <button tabindex="0" class="btn btn-square btn-sm btn-outline">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                            </svg>
+                                        </button>
+                                        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-white rounded-box w-52 border">
+                                            <li><a onclick="emailReceipt(3)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                </svg>
+                                                Email Receipt
+                                            </a></li>
+                                            <li><a onclick="printReceipt(3)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                                </svg>
+                                                Print Receipt
+                                            </a></li>
+                                            <li><a onclick="viewInvoice(3)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                                View Invoice
+                                            </a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Cash Payment -->
+                        <tr class="border-b border-gray-100 hover:bg-gray-50">
+                            <td class="p-4">
+                                <div class="font-medium text-gray-900">REC-2025-09-004</div>
+                                <div class="text-sm text-gray-500">Walk-in Customer</div>
+                            </td>
+                            <td class="p-4">
+                                <div class="font-medium text-gray-900">Jane Doe</div>
+                                <div class="text-sm text-gray-500">Cash Customer</div>
+                            </td>
+                            <td class="p-4">
+                                <div class="text-gray-900">Sep 11, 2025</div>
+                                <div class="text-sm text-gray-500">3 days ago, 3:45 PM</div>
+                            </td>
+                            <td class="p-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-5 bg-gray-600 rounded flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-900">Cash</div>
+                                        <div class="text-xs text-gray-500">Direct payment</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="p-4 text-right">
+                                <div class="font-medium text-gray-900">$450.00</div>
+                                <div class="text-sm text-gray-500">USD</div>
+                            </td>
+                            <td class="p-4 text-center">
+                                <span class="badge badge-warning badge-sm">Printed</span>
+                            </td>
+                            <td class="p-4">
+                                <div class="flex items-center justify-center gap-2">
+                                    <button class="btn btn-square btn-sm btn-outline" onclick="viewReceipt(4)" title="View">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    </button>
+                                    <button class="btn btn-square btn-sm btn-outline" onclick="printReceipt(4)" title="Print">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                        </svg>
+                                    </button>
+                                    <div class="dropdown dropdown-end">
+                                        <button tabindex="0" class="btn btn-square btn-sm btn-outline">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                            </svg>
+                                        </button>
+                                        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-white rounded-box w-52 border">
+                                            <li><a onclick="downloadReceipt(4)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                                Download PDF
+                                            </a></li>
+                                            <li><a onclick="duplicateReceipt(4)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                </svg>
+                                                Duplicate
+                                            </a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="p-6 border-t border-gray-200">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="text-sm text-gray-600">
+                        Showing <span class="font-medium">1</span> to <span class="font-medium">4</span> 
+                        of <span class="font-medium">4</span> receipts
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="btn btn-outline btn-sm" disabled>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                            </svg>
+                            Previous
+                        </button>
+                        <span class="btn btn-sm bg-main text-white">1</span>
+                        <button class="btn btn-outline btn-sm" disabled>
+                            Next
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Search and Filter functionality
+let receiptsData = []; // This would be populated with actual data from Django
+let filteredData = [];
+let currentSort = { field: '', direction: 'asc' };
+
+// Initialize search functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Add search input event listener
+    document.getElementById('searchInput').addEventListener('input', performSearch);
+    
+    // Add Enter key support for search
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
+    });
+});
+
+function performSearch() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const paymentMethodFilter = document.getElementById('paymentMethodFilter').value;
+    const statusFilter = document.getElementById('statusFilter').value;
+    const dateFilter = document.getElementById('dateFilter').value;
+    const amountFilter = document.getElementById('amountFilter').value;
+    
+    // Apply all filters together
+    applyFilters();
+}
+
+function applyFilters() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const paymentMethodFilter = document.getElementById('paymentMethodFilter').value;
+    const statusFilter = document.getElementById('statusFilter').value;
+    const dateFilter = document.getElementById('dateFilter').value;
+    const amountFilter = document.getElementById('amountFilter').value;
+    
+    // In a real implementation, this would filter the actual data
+    // For now, we'll just update the UI to show filtering is working
+    
+    console.log('Applying filters:', {
+        search: searchTerm,
+        paymentMethod: paymentMethodFilter,
+        status: statusFilter,
+        date: dateFilter,
+        amount: amountFilter
+    });
+    
+    // Here you would make an AJAX call to filter the data
+    // updateTable(filteredData);
+}
+
+function clearFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('paymentMethodFilter').value = '';
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('dateFilter').value = '';
+    document.getElementById('amountFilter').value = '';
+    applyFilters();
+}
+
+function sortTable(field) {
+    // Toggle sort direction
+    if (currentSort.field === field) {
+        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+        currentSort.field = field;
+        currentSort.direction = 'asc';
+    }
+    
+    console.log('Sorting by:', field, currentSort.direction);
+    // Here you would sort the data and update the table
+}
+
+function changeEntriesPerPage() {
+    const entries = document.getElementById('entriesPerPage').value;
+    console.log('Changing entries per page to:', entries);
+    // Here you would update the pagination and reload data
+}
+
+// Receipt actions
+function viewReceipt(id) {
+    console.log('Viewing receipt:', id);
+    // Redirect to receipt view page or open modal
+}
+
+function downloadReceipt(id) {
+    console.log('Downloading receipt:', id);
+    // Generate and download PDF
+    alert('PDF download started...');
+}
+
+function emailReceipt(id) {
+    console.log('Emailing receipt:', id);
+    const email = prompt('Enter email address:');
+    if (email && email.includes('@')) {
+        alert(`Receipt ${id} sent to ${email}`);
+        // Make AJAX call to send email
+    }
+}
+
+function printReceipt(id) {
+    console.log('Printing receipt:', id);
+    // Open print dialog for receipt
+    window.print();
+}
+
+function duplicateReceipt(id) {
+    console.log('Duplicating receipt:', id);
+    if (confirm('Create a copy of this receipt?')) {
+        // Make AJAX call to duplicate receipt
+        alert('Receipt duplicated successfully!');
+    }
+}
+
+function viewInvoice(id) {
+    console.log('Viewing related invoice for receipt:', id);
+    // Navigate to related invoice
+    window.location.href = `{% url 'billingapp:invoices' %}?receipt=${id}`;
+}
+
+function exportReceipts() {
+    console.log('Exporting receipts');
+    // Export filtered data to CSV/Excel
+    alert('Export started...');
+}
+</script>
+
+<style>
+.input:focus, .select:focus {
+    box-shadow: 0 0 0 3px rgba(81, 41, 206, 0.1);
+}
+
+.table tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.badge-info {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.badge-success {
+    background-color: #10b981;
+    color: white;
+}
+
+.badge-warning {
+    background-color: #f59e0b;
+    color: white;
+}
+
+.badge-outline {
+    border: 1px solid #d1d5db;
+    background-color: transparent;
+    color: #6b7280;
+}
+</style>
+{% endblock %}
