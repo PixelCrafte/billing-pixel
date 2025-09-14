@@ -17,14 +17,54 @@ class ProfileView(View):
 class QuotationView(View):
     def get(self, request):
         return render(request, "billingapp/quotation.html")
+
+class QuotesView(View):
+    def get(self, request):
+        # In a real implementation, you'd query the database for quotes
+        context = {
+            'total_quotes': 15,
+            'total_value': '12450.00',
+            'accepted_quotes': 8,
+            'conversion_rate': 53,
+            'month_quotes': 3,
+            'current_month': 'September',
+            'current_year': '2025',
+        }
+        return render(request, "billingapp/quotes.html", context)
     
 class InvoiceView(View):
     def get(self, request):
         return render(request, "billingapp/invoice.html")
+
+class InvoicesView(View):
+    def get(self, request):
+        # In a real implementation, you'd query the database for invoices
+        context = {
+            'total_invoices': 12,
+            'total_value': '8750.00',
+            'paid_invoices': 9,
+            'payment_rate': 75,
+            'month_invoices': 2,
+            'current_month': 'September',
+            'current_year': '2025',
+        }
+        return render(request, "billingapp/invoices.html", context)
     
 class ReceiptView(View):
     def get(self, request):
         return render(request, "billingapp/receipt.html")
+
+class ReceiptsView(View):
+    def get(self, request):
+        # In a real implementation, you'd query the database for receipts
+        context = {
+            'total_receipts': 9,
+            'total_value': '8750.00',
+            'month_receipts': 2,
+            'current_month': 'September',
+            'current_year': '2025',
+        }
+        return render(request, "billingapp/receipts.html", context)
 
 class LoginView(View):
     def get(self, request):
