@@ -14,6 +14,18 @@ class ProfileView(View):
     def get(self, request):
         return render(request, "billingapp/profile.html")
 
+class QuotationView(View):
+    def get(self, request):
+        return render(request, "billingapp/quotation.html")
+    
+class InvoiceView(View):
+    def get(self, request):
+        return render(request, "billingapp/invoice.html")
+    
+class ReceiptView(View):
+    def get(self, request):
+        return render(request, "billingapp/receipt.html")
+
 class LoginView(View):
     def get(self, request):
         return render(request, "billingapp/login.html")

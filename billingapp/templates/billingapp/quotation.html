@@ -1,275 +1,712 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Quotation - Pixel Crafte Billing</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* Simple print-friendly styles */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            #quotation-preview, #quotation-preview * {
-                visibility: visible;
-            }
-            #quotation-preview {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-            }
-            .no-print {
-                display: none;
-            }
-        }
-    </style>
+{% extends 'billingapp/base.html' %}
+{% load static %}
 
-    <script>
-        // Configuration for Tailwind CSS JIT compiler
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'main': '#5129CE',
-                        'accent': '#8D86FC',
-                        'faded': '#EBE4FE',
-                    }
-                }
-            }
-        }
-    </script>
-</head>
-<body class="bg-gray-100 text-gray-800">
+{% block title %}Create Quotation - PixelCrafte Billing{% endblock %}
 
-    <!-- Main Container -->
-    <div class="container mx-auto p-4 md:p-8">
-
-        <!-- Control Buttons -->
-        <div class="no-print mb-6 flex flex-wrap gap-4 justify-between items-center">
-            <div>
-                <h1 class="text-3xl font-bold text-main">Create Quotation</h1>
-                <p class="text-gray-500">Fill in the details below to generate a quotation.</p>
-            </div>
-            <div class="flex gap-2">
-                 <button onclick="window.print()" class="py-2 px-4 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 transition duration-300">
-                    <i class="fas fa-download mr-2"></i>Print
-                </button>
-            </div>
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-6">
+    <!-- Page Header -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Create Quotation</h1>
+            <p class="text-gray-600 mt-1">Generate professional quotations for your clients</p>
         </div>
-
-        <!-- Quotation Preview Section -->
-        <div id="quotation-preview" class="bg-white rounded-xl shadow-lg p-8 md:p-12">
-            
-            <!-- Quotation Header -->
-            <header class="flex justify-between items-start mb-12 border-b pb-8">
-                <!-- Logo and Company Info -->
-                <div class="w-1/2">
-                    <div class="flex items-center justify-center h-24 w-48 bg-faded text-gray-400 rounded-lg mb-4">
-                        <span class="italic">Your Logo Here</span>
-                    </div>
-                    <h2 class="text-xl font-bold text-main mb-1">Pixel Crafte</h2>
-                    <p class="text-gray-600">123 Creative Lane<br>Design City, DC 12345</p>
-                    <p class="text-gray-600">billing@pixelcrafte.co.zw</p>
-                </div>
-                <!-- Quotation Title and Details -->
-                <div class="w-1/2 text-right">
-                    <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-2">QUOTATION</h1>
-                    <div class="grid grid-cols-2 gap-x-4">
-                        <span class="font-semibold text-gray-600">Quote #</span>
-                        <input type="text" placeholder="QUO-2025-001" class="p-1 border rounded text-right">
-                        <span class="font-semibold text-gray-600">Date</span>
-                        <input type="date" class="p-1 border rounded text-right">
-                        <span class="font-semibold text-gray-600">Expiry Date</span>
-                        <input type="date" class="p-1 border rounded text-right">
-                    </div>
-                </div>
-            </header>
-
-            <!-- Billing Information -->
-            <section class="flex justify-between mb-12">
-                <div>
-                    <h3 class="font-semibold text-gray-500 mb-2">PREPARED FOR:</h3>
-                    <input type="text" placeholder="Client Company Name" class="w-full p-1 border rounded font-bold text-lg mb-1">
-                    <textarea placeholder="Client Address..." class="w-full p-1 border rounded text-gray-600" rows="3"></textarea>
-                </div>
-            </section>
-
-            <!-- Quotation Items Table -->
-            <section>
-                <table class="w-full text-left" id="quotation-items-table">
-                    <thead>
-                        <tr class="bg-main text-white">
-                            <th class="p-3 font-semibold">Description</th>
-                            <th class="p-3 font-semibold w-24 text-center">Qty</th>
-                            <th class="p-3 font-semibold w-32 text-right">Rate</th>
-                            <th class="p-3 font-semibold w-32 text-right">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body">
-                        <!-- Default Rows -->
-                        <tr class="item-row">
-                            <td><input type="text" placeholder="Service or product description" class="w-full p-2 border rounded"></td>
-                            <td><input type="number" placeholder="1" value="1" class="w-full p-2 border rounded text-center item-qty"></td>
-                            <td><input type="number" placeholder="0.00" class="w-full p-2 border rounded text-right item-rate"></td>
-                            <td class="p-2 text-right item-amount">$0.00</td>
-                        </tr>
-                        <tr class="item-row">
-                            <td><input type="text" placeholder="Service or product description" class="w-full p-2 border rounded"></td>
-                            <td><input type="number" placeholder="1" class="w-full p-2 border rounded text-center item-qty"></td>
-                            <td><input type="number" placeholder="0.00" class="w-full p-2 border rounded text-right item-rate"></td>
-                            <td class="p-2 text-right item-amount">$0.00</td>
-                        </tr>
-                        <tr class="item-row">
-                            <td><input type="text" placeholder="Service or product description" class="w-full p-2 border rounded"></td>
-                            <td><input type="number" placeholder="1" class="w-full p-2 border rounded text-center item-qty"></td>
-                            <td><input type="number" placeholder="0.00" class="w-full p-2 border rounded text-right item-rate"></td>
-                            <td class="p-2 text-right item-amount">$0.00</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="w-full flex justify-end my-4 gap-2">
-                    <button onclick="clearQuotation()" class="py-2 px-4 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 transition duration-300">
-                    <i class="fas fa-trash mr-2"></i>Clear All
-                    </button>
-                    <button onclick="addRow()" class="py-2 px-4 bg-main text-white font-semibold rounded-lg shadow-md hover:bg-opacity-90 transition duration-300">
-                        <i class="fas fa-plus mr-2"></i>Add Item
-                    </button>
-                </div>
-            </section>
-
-            <!-- Quotation Totals -->
-            <section class="flex justify-end mt-8">
-                <div class="w-full md:w-1/2 lg:w-1/3">
-                    <div class="flex justify-between py-2">
-                        <span class="font-semibold text-gray-600">Subtotal</span>
-                        <span id="subtotal" class="font-semibold">$0.00</span>
-                    </div>
-                    <div class="flex justify-between items-center py-2 border-t">
-                        <span class="font-semibold text-gray-600">Discount (%)</span>
-                        <input type="number" id="discount" placeholder="0" class="w-24 p-1 border rounded text-right">
-                    </div>
-                    <div class="flex justify-between items-center py-2 border-t">
-                        <span class="font-semibold text-gray-600">Tax (%)</span>
-                        <input type="number" id="tax" placeholder="0" class="w-24 p-1 border rounded text-right">
-                    </div>
-                    <div class="flex justify-between py-3 border-t-2 border-main mt-2">
-                        <span class="font-bold text-xl text-main">ESTIMATED TOTAL</span>
-                        <span id="total" class="font-bold text-xl text-main">$0.00</span>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Terms and Footer -->
-            <footer class="mt-12">
-                <h4 class="font-semibold text-gray-500 mb-2">Terms & Conditions:</h4>
-                <textarea placeholder="This quotation is valid for 30 days. Terms of service apply." class="w-full p-2 border rounded" rows="3"></textarea>
-                <div class="text-center text-gray-400 mt-8 text-sm">
-                    Page <span id="page-number">1</span> of <span id="total-pages">1</span>
-                </div>
-            </footer>
+        <div class="flex gap-3">
+            <button onclick="saveQuotation()" class="btn btn-outline btn-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                Save Draft
+            </button>
+            <button onclick="previewQuotation()" class="btn bg-main text-white hover:bg-main/90 btn-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                Preview & Send
+            </button>
         </div>
     </div>
 
-    <script>
-        // Set default date
-        document.addEventListener('DOMContentLoaded', () => {
-            const dateInputs = document.querySelectorAll('input[type="date"]');
-            if (dateInputs.length > 0) {
-                dateInputs[0].value = new Date().toISOString().substring(0, 10);
-            }
-            attachEventListeners();
-            calculateTotal();
-        });
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <!-- Quotation Form -->
+        <div class="xl:col-span-2 space-y-6">
+            <!-- Basic Information -->
+            <div class="card bg-white shadow-lg border border-gray-100">
+                <div class="card-body p-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Basic Information
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Quotation Number</span>
+                            </label>
+                            <input type="text" 
+                                   id="quote_number"
+                                   placeholder="QUO-2025-001"
+                                   class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Company</span>
+                            </label>
+                            <select id="company_select" class="select select-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                                <option value="">Select Company</option>
+                                <option value="default">PixelCrafte (Default)</option>
+                                <!-- Companies will be populated dynamically -->
+                            </select>
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Date</span>
+                            </label>
+                            <input type="date" 
+                                   id="quote_date"
+                                   class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Expiry Date</span>
+                            </label>
+                            <input type="date" 
+                                   id="expiry_date"
+                                   class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        // Function to add a new item row to the table
-        function addRow() {
-            const tableBody = document.getElementById('table-body');
-            const newRow = document.createElement('tr');
-            newRow.classList.add('item-row');
-            newRow.innerHTML = `
-                <td><input type="text" placeholder="Service or product description" class="w-full p-2 border rounded"></td>
-                <td><input type="number" placeholder="1" class="w-full p-2 border rounded text-center item-qty"></td>
-                <td><input type="number" placeholder="0.00" class="w-full p-2 border rounded text-right item-rate"></td>
-                <td class="p-2 text-right item-amount">$0.00</td>
-            `;
-            tableBody.appendChild(newRow);
-            attachEventListeners(); // Re-attach listeners to include the new row
+            <!-- Client Information -->
+            <div class="card bg-white shadow-lg border border-gray-100">
+                <div class="card-body p-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        Client Information
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Client Name</span>
+                            </label>
+                            <input type="text" 
+                                   id="client_name"
+                                   placeholder="Client Company Name"
+                                   class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Contact Person</span>
+                            </label>
+                            <input type="text" 
+                                   id="contact_person"
+                                   placeholder="Contact Person Name"
+                                   class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Email</span>
+                            </label>
+                            <input type="email" 
+                                   id="client_email"
+                                   placeholder="client@company.com"
+                                   class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Phone</span>
+                            </label>
+                            <input type="tel" 
+                                   id="client_phone"
+                                   placeholder="Phone Number"
+                                   class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                        </div>
+                        
+                        <div class="form-control md:col-span-2">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Address</span>
+                            </label>
+                            <textarea id="client_address" 
+                                      rows="3"
+                                      placeholder="Client Address"
+                                      class="textarea textarea-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items Section -->
+            <div class="card bg-white shadow-lg border border-gray-100">
+                <div class="card-body p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                            </svg>
+                            Items & Services
+                        </h2>
+                        <button onclick="addItem()" class="btn btn-sm bg-main text-white hover:bg-main/90">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Add Item
+                        </button>
+                    </div>
+                    
+                    <!-- Items Table -->
+                    <div class="overflow-x-auto">
+                        <table class="table w-full">
+                            <thead>
+                                <tr class="bg-main text-white">
+                                    <th class="text-white">Description</th>
+                                    <th class="text-white text-center w-24">Qty</th>
+                                    <th class="text-white text-right w-32">Rate</th>
+                                    <th class="text-white text-right w-32">Amount</th>
+                                    <th class="text-white text-center w-16">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="items-table-body">
+                                <!-- Items will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Add First Item Button (shown when no items) -->
+                    <div id="empty-items-state" class="text-center py-8">
+                        <div class="w-16 h-16 bg-faded rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">No items added yet</h3>
+                        <p class="text-gray-600 mb-4">Add items or services to your quotation</p>
+                        <button onclick="addItem()" class="btn bg-main text-white hover:bg-main/90">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Add Your First Item
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terms & Notes -->
+            <div class="card bg-white shadow-lg border border-gray-100">
+                <div class="card-body p-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Terms & Notes
+                    </h2>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-medium text-gray-700">Terms & Conditions</span>
+                        </label>
+                        <textarea id="terms_conditions" 
+                                  rows="4"
+                                  placeholder="This quotation is valid for 30 days. Payment terms: Net 30 days."
+                                  class="textarea textarea-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"></textarea>
+                    </div>
+                    
+                    <div class="form-control mt-4">
+                        <label class="label">
+                            <span class="label-text font-medium text-gray-700">Additional Notes</span>
+                        </label>
+                        <textarea id="additional_notes" 
+                                  rows="3"
+                                  placeholder="Any additional information or notes for the client..."
+                                  class="textarea textarea-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Panel -->
+        <div class="xl:col-span-1">
+            <div class="card bg-white shadow-lg border border-gray-100 sticky top-6">
+                <div class="card-body p-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                        Quotation Summary
+                    </h2>
+                    
+                    <!-- Calculations -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Subtotal:</span>
+                            <span id="subtotal-display" class="font-medium">$0.00</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 text-sm">Discount:</span>
+                            <div class="flex items-center gap-2">
+                                <input type="number" 
+                                       id="discount_percent"
+                                       min="0" 
+                                       max="100" 
+                                       placeholder="0"
+                                       class="input input-bordered input-sm w-16 text-right">
+                                <span class="text-sm text-gray-600">%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Discount Amount:</span>
+                            <span id="discount-display" class="font-medium text-red-600">-$0.00</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 text-sm">Tax:</span>
+                            <div class="flex items-center gap-2">
+                                <input type="number" 
+                                       id="tax_percent"
+                                       min="0" 
+                                       max="100" 
+                                       placeholder="0"
+                                       class="input input-bordered input-sm w-16 text-right">
+                                <span class="text-sm text-gray-600">%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Tax Amount:</span>
+                            <span id="tax-display" class="font-medium">$0.00</span>
+                        </div>
+                        
+                        <div class="divider my-2"></div>
+                        
+                        <div class="flex justify-between text-lg font-bold">
+                            <span class="text-main">Total:</span>
+                            <span id="total-display" class="text-main">$0.00</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="space-y-3 mt-6">
+                        <button onclick="previewQuotation()" class="btn bg-main text-white hover:bg-main/90 w-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            Preview & Send
+                        </button>
+                        
+                        <button onclick="saveQuotation()" class="btn btn-outline w-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            Save Draft
+                        </button>
+                        
+                        <button onclick="clearQuotation()" class="btn btn-outline btn-error w-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Clear All
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<dialog id="previewModal" class="modal">
+    <div class="modal-box w-11/12 max-w-6xl max-h-full">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-lg">Quotation Preview</h3>
+            <div class="flex gap-2">
+                <button onclick="printQuotation()" class="btn btn-sm btn-outline">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a1 1 0 001-1v-4a1 1 0 00-1-1H9a1 1 0 00-1 1v4a1 1 0 001 1z" />
+                    </svg>
+                    Print
+                </button>
+                <button onclick="document.getElementById('previewModal').close()" class="btn btn-sm btn-square btn-outline">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Preview Content -->
+        <div id="quotation-preview" class="bg-white p-8 border rounded-lg">
+            <!-- Preview will be generated here -->
+        </div>
+        
+        <div class="modal-action">
+            <button onclick="sendQuotation()" class="btn bg-main text-white hover:bg-main/90">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+                Send Quotation
+            </button>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
+
+<script>
+let itemCounter = 0;
+let items = [];
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', function() {
+    // Set default date
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('quote_date').value = today;
+    
+    // Set default expiry date (30 days from now)
+    const expiry = new Date();
+    expiry.setDate(expiry.getDate() + 30);
+    document.getElementById('expiry_date').value = expiry.toISOString().split('T')[0];
+    
+    // Generate quote number
+    document.getElementById('quote_number').value = generateQuoteNumber();
+    
+    // Add event listeners for calculations
+    document.getElementById('discount_percent').addEventListener('input', calculateTotals);
+    document.getElementById('tax_percent').addEventListener('input', calculateTotals);
+    
+    // Show empty state
+    updateItemsDisplay();
+});
+
+function generateQuoteNumber() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return `QUO-${year}-${month}-${random}`;
+}
+
+function addItem() {
+    const item = {
+        id: ++itemCounter,
+        description: '',
+        quantity: 1,
+        rate: 0,
+        amount: 0
+    };
+    items.push(item);
+    updateItemsDisplay();
+    calculateTotals();
+}
+
+function removeItem(id) {
+    items = items.filter(item => item.id !== id);
+    updateItemsDisplay();
+    calculateTotals();
+}
+
+function updateItemsDisplay() {
+    const tbody = document.getElementById('items-table-body');
+    const emptyState = document.getElementById('empty-items-state');
+    
+    if (items.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+    }
+    
+    emptyState.style.display = 'none';
+    
+    tbody.innerHTML = items.map(item => `
+        <tr>
+            <td>
+                <input type="text" 
+                       value="${item.description}"
+                       placeholder="Product or service description"
+                       class="input input-bordered input-sm w-full"
+                       onchange="updateItem(${item.id}, 'description', this.value)">
+            </td>
+            <td>
+                <input type="number" 
+                       value="${item.quantity}"
+                       min="1"
+                       class="input input-bordered input-sm w-full text-center"
+                       onchange="updateItem(${item.id}, 'quantity', parseFloat(this.value) || 1)">
+            </td>
+            <td>
+                <input type="number" 
+                       value="${item.rate}"
+                       min="0"
+                       step="0.01"
+                       class="input input-bordered input-sm w-full text-right"
+                       onchange="updateItem(${item.id}, 'rate', parseFloat(this.value) || 0)">
+            </td>
+            <td class="text-right font-medium">$${item.amount.toFixed(2)}</td>
+            <td class="text-center">
+                <button class="btn btn-square btn-sm btn-outline btn-error" onclick="removeItem(${item.id})">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function updateItem(id, field, value) {
+    const item = items.find(i => i.id === id);
+    if (item) {
+        item[field] = value;
+        if (field === 'quantity' || field === 'rate') {
+            item.amount = item.quantity * item.rate;
         }
+        updateItemsDisplay();
+        calculateTotals();
+    }
+}
 
-        // Function to clear the quotation form
-        function clearQuotation() {
-            // Clear all input fields
-            const inputs = document.querySelectorAll('input, textarea');
-            inputs.forEach(input => {
-                if(input.type !== 'date') input.value = '';
-            });
+function calculateTotals() {
+    const subtotal = items.reduce((sum, item) => sum + item.amount, 0);
+    const discountPercent = parseFloat(document.getElementById('discount_percent').value) || 0;
+    const taxPercent = parseFloat(document.getElementById('tax_percent').value) || 0;
+    
+    const discountAmount = subtotal * (discountPercent / 100);
+    const subtotalAfterDiscount = subtotal - discountAmount;
+    const taxAmount = subtotalAfterDiscount * (taxPercent / 100);
+    const total = subtotalAfterDiscount + taxAmount;
+    
+    document.getElementById('subtotal-display').textContent = `$${subtotal.toFixed(2)}`;
+    document.getElementById('discount-display').textContent = `-$${discountAmount.toFixed(2)}`;
+    document.getElementById('tax-display').textContent = `$${taxAmount.toFixed(2)}`;
+    document.getElementById('total-display').textContent = `$${total.toFixed(2)}`;
+}
 
-            // Remove all but the first three item rows
-            const tableBody = document.getElementById('table-body');
-            const rows = tableBody.querySelectorAll('.item-row');
-            while (rows.length > 3 && tableBody.children.length > 3) {
-                 tableBody.removeChild(tableBody.lastChild);
-            }
-            
-            // Recalculate total which should now be 0
-            calculateTotal();
-        }
+function previewQuotation() {
+    const preview = generatePreviewHTML();
+    document.getElementById('quotation-preview').innerHTML = preview;
+    document.getElementById('previewModal').showModal();
+}
 
-        // Function to calculate all totals
-        function calculateTotal() {
-            let subtotal = 0;
-            const rows = document.querySelectorAll('.item-row');
+function generatePreviewHTML() {
+    const quoteNumber = document.getElementById('quote_number').value;
+    const quoteDate = document.getElementById('quote_date').value;
+    const expiryDate = document.getElementById('expiry_date').value;
+    const clientName = document.getElementById('client_name').value;
+    const contactPerson = document.getElementById('contact_person').value;
+    const clientEmail = document.getElementById('client_email').value;
+    const clientPhone = document.getElementById('client_phone').value;
+    const clientAddress = document.getElementById('client_address').value;
+    const terms = document.getElementById('terms_conditions').value;
+    const notes = document.getElementById('additional_notes').value;
+    
+    const subtotal = items.reduce((sum, item) => sum + item.amount, 0);
+    const discountPercent = parseFloat(document.getElementById('discount_percent').value) || 0;
+    const taxPercent = parseFloat(document.getElementById('tax_percent').value) || 0;
+    const discountAmount = subtotal * (discountPercent / 100);
+    const subtotalAfterDiscount = subtotal - discountAmount;
+    const taxAmount = subtotalAfterDiscount * (taxPercent / 100);
+    const total = subtotalAfterDiscount + taxAmount;
+    
+    return `
+        <!-- Header -->
+        <div class="flex justify-between items-start mb-8 pb-8 border-b-2 border-gray-200">
+            <div>
+                <div class="flex items-center gap-3 mb-4">
+                    <img src="{% static 'billingapp/images/logo.svg' %}" alt="PixelCrafte" class="h-12 w-12">
+                    <div>
+                        <h2 class="text-2xl font-bold text-main">PixelCrafte</h2>
+                        <p class="text-gray-600">Professional Billing Solutions</p>
+                    </div>
+                </div>
+                <div class="text-gray-600">
+                    <p>123 Business Avenue</p>
+                    <p>City, State 12345</p>
+                    <p>contact@pixelcrafte.com</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <h1 class="text-4xl font-bold text-gray-800 mb-4">QUOTATION</h1>
+                <div class="space-y-1 text-sm">
+                    <div><span class="font-semibold">Quote #:</span> ${quoteNumber}</div>
+                    <div><span class="font-semibold">Date:</span> ${new Date(quoteDate).toLocaleDateString()}</div>
+                    <div><span class="font-semibold">Expires:</span> ${new Date(expiryDate).toLocaleDateString()}</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Client Info -->
+        <div class="mb-8">
+            <h3 class="font-semibold text-gray-500 mb-2">PREPARED FOR:</h3>
+            <div class="text-gray-800">
+                <div class="font-bold text-lg">${clientName || 'Client Name'}</div>
+                ${contactPerson ? `<div>Attn: ${contactPerson}</div>` : ''}
+                ${clientEmail ? `<div>${clientEmail}</div>` : ''}
+                ${clientPhone ? `<div>${clientPhone}</div>` : ''}
+                ${clientAddress ? `<div class="whitespace-pre-line">${clientAddress}</div>` : ''}
+            </div>
+        </div>
+        
+        <!-- Items Table -->
+        <div class="mb-8">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-main text-white">
+                        <th class="text-left p-3">Description</th>
+                        <th class="text-center p-3 w-20">Qty</th>
+                        <th class="text-right p-3 w-24">Rate</th>
+                        <th class="text-right p-3 w-24">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${items.map(item => `
+                        <tr class="border-b">
+                            <td class="p-3">${item.description || 'Item description'}</td>
+                            <td class="p-3 text-center">${item.quantity}</td>
+                            <td class="p-3 text-right">$${item.rate.toFixed(2)}</td>
+                            <td class="p-3 text-right font-medium">$${item.amount.toFixed(2)}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Totals -->
+        <div class="flex justify-end mb-8">
+            <div class="w-64 space-y-2">
+                <div class="flex justify-between"><span>Subtotal:</span><span>$${subtotal.toFixed(2)}</span></div>
+                ${discountPercent > 0 ? `<div class="flex justify-between text-red-600"><span>Discount (${discountPercent}%):</span><span>-$${discountAmount.toFixed(2)}</span></div>` : ''}
+                ${taxPercent > 0 ? `<div class="flex justify-between"><span>Tax (${taxPercent}%):</span><span>$${taxAmount.toFixed(2)}</span></div>` : ''}
+                <div class="border-t-2 border-main pt-2">
+                    <div class="flex justify-between text-xl font-bold text-main">
+                        <span>TOTAL:</span><span>$${total.toFixed(2)}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Terms & Notes -->
+        ${terms || notes ? `
+            <div class="space-y-4">
+                ${terms ? `
+                    <div>
+                        <h4 class="font-semibold text-gray-500 mb-2">TERMS & CONDITIONS:</h4>
+                        <div class="text-gray-700 whitespace-pre-line">${terms}</div>
+                    </div>
+                ` : ''}
+                ${notes ? `
+                    <div>
+                        <h4 class="font-semibold text-gray-500 mb-2">ADDITIONAL NOTES:</h4>
+                        <div class="text-gray-700 whitespace-pre-line">${notes}</div>
+                    </div>
+                ` : ''}
+            </div>
+        ` : ''}
+    `;
+}
 
-            rows.forEach(row => {
-                const qtyInput = row.querySelector('.item-qty');
-                const rateInput = row.querySelector('.item-rate');
-                const amountCell = row.querySelector('.item-amount');
+function printQuotation() {
+    const printWindow = window.open('', '_blank');
+    const previewContent = document.getElementById('quotation-preview').innerHTML;
+    
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Quotation - ${document.getElementById('quote_number').value}</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { padding: 8px; border-bottom: 1px solid #ddd; }
+                th { background-color: #5129CE; color: white; }
+                .text-right { text-align: right; }
+                .text-center { text-align: center; }
+                .font-bold { font-weight: bold; }
+                .mb-8 { margin-bottom: 2rem; }
+                .mb-4 { margin-bottom: 1rem; }
+                .mb-2 { margin-bottom: 0.5rem; }
+                .border-b-2 { border-bottom: 2px solid #e5e7eb; }
+                .pb-8 { padding-bottom: 2rem; }
+                .pt-2 { padding-top: 0.5rem; }
+                .space-y-1 > * + * { margin-top: 0.25rem; }
+                .space-y-2 > * + * { margin-top: 0.5rem; }
+                .space-y-4 > * + * { margin-top: 1rem; }
+                .whitespace-pre-line { white-space: pre-line; }
+            </style>
+        </head>
+        <body>
+            ${previewContent}
+        </body>
+        </html>
+    `);
+    
+    printWindow.document.close();
+    printWindow.print();
+}
 
-                const qty = parseFloat(qtyInput.value) || 0;
-                const rate = parseFloat(rateInput.value) || 0;
-                const amount = qty * rate;
+function saveQuotation() {
+    // Implementation for saving quotation
+    alert('Quotation saved as draft!');
+}
 
-                amountCell.textContent = '$' + amount.toFixed(2);
-                subtotal += amount;
-            });
+function sendQuotation() {
+    // Implementation for sending quotation
+    alert('Quotation sent to client!');
+    document.getElementById('previewModal').close();
+}
 
-            const discountPercent = parseFloat(document.getElementById('discount').value) || 0;
-            const taxPercent = parseFloat(document.getElementById('tax').value) || 0;
+function clearQuotation() {
+    if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+        // Clear all form fields
+        document.getElementById('quote_number').value = generateQuoteNumber();
+        document.getElementById('client_name').value = '';
+        document.getElementById('contact_person').value = '';
+        document.getElementById('client_email').value = '';
+        document.getElementById('client_phone').value = '';
+        document.getElementById('client_address').value = '';
+        document.getElementById('terms_conditions').value = '';
+        document.getElementById('additional_notes').value = '';
+        document.getElementById('discount_percent').value = '';
+        document.getElementById('tax_percent').value = '';
+        
+        // Clear items
+        items = [];
+        itemCounter = 0;
+        updateItemsDisplay();
+        calculateTotals();
+    }
+}
+</script>
 
-            const discountAmount = subtotal * (discountPercent / 100);
-            const subtotalAfterDiscount = subtotal - discountAmount;
-            const taxAmount = subtotalAfterDiscount * (taxPercent / 100);
-            const total = subtotalAfterDiscount + taxAmount;
+<style>
+.input:focus, .textarea:focus, .select:focus {
+    box-shadow: 0 0 0 3px rgba(81, 41, 206, 0.1);
+}
 
-            document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
-            document.getElementById('total').textContent = '$' + total.toFixed(2);
-        }
-
-        // Function to attach event listeners to all relevant inputs
-        function attachEventListeners() {
-            const inputs = document.querySelectorAll('.item-qty, .item-rate, #discount, #tax');
-            inputs.forEach(input => {
-                input.removeEventListener('input', calculateTotal); // Prevent multiple listeners
-                input.addEventListener('input', calculateTotal);
-            });
-        }
-    </script>
-
-</body>
-</html>
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #quotation-preview, #quotation-preview * {
+        visibility: visible;
+    }
+    #quotation-preview {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}

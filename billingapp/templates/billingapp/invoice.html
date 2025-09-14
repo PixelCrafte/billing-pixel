@@ -1,0 +1,838 @@
+{% extends 'billingapp/base.html' %}
+{% load static %}
+
+{% block title %}Create Invoice - PixelCrafte Billing{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-6">
+    <!-- Page Header -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Create Invoice</h1>
+            <p class="text-gray-600 mt-1">Generate professional invoices for your clients</p>
+        </div>
+        <div class="flex gap-3">
+            <button onclick="saveInvoice()" class="btn btn-outline btn-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                Save Draft
+            </button>
+            <button onclick="previewInvoice()" class="btn bg-main text-white hover:bg-main/90 btn-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                Preview & Send
+            </button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <!-- Invoice Form -->
+        <div class="xl:col-span-2 space-y-6">
+            <!-- Basic Information -->
+            <div class="card bg-white shadow-lg border border-gray-100">
+                <div class="card-body p-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Invoice Information
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Invoice Number</span>
+                            </label>
+                            <input type="text" 
+                                   id="invoice_number"
+                                   placeholder="INV-2025-001"
+                                   class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Company</span>
+                            </label>
+                            <select id="company_select" class="select select-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                                <option value="">Select Company</option>
+                                <option value="default">PixelCrafte (Default)</option>
+                                <!-- Companies will be populated dynamically -->
+                            </select>
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Issue Date</span>
+                            </label>
+                            <input type="date" 
+                                   id="issue_date"
+                                   class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Due Date</span>
+                            </label>
+                            <input type="date" 
+                                   id="due_date"
+                                   class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Status</span>
+                            </label>
+                            <select id="invoice_status" class="select select-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                                <option value="draft">Draft</option>
+                                <option value="sent">Sent</option>
+                                <option value="paid">Paid</option>
+                                <option value="overdue">Overdue</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Purchase Order</span>
+                            </label>
+                            <input type="text" 
+                                   id="purchase_order"
+                                   placeholder="PO Number (Optional)"
+                                   class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Client Information -->
+            <div class="card bg-white shadow-lg border border-gray-100">
+                <div class="card-body p-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        Bill To
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Client Name</span>
+                            </label>
+                            <input type="text" 
+                                   id="client_name"
+                                   placeholder="Client Company Name"
+                                   class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Contact Person</span>
+                            </label>
+                            <input type="text" 
+                                   id="contact_person"
+                                   placeholder="Contact Person Name"
+                                   class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Email</span>
+                            </label>
+                            <input type="email" 
+                                   id="client_email"
+                                   placeholder="client@company.com"
+                                   class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Phone</span>
+                            </label>
+                            <input type="tel" 
+                                   id="client_phone"
+                                   placeholder="Phone Number"
+                                   class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                        </div>
+                        
+                        <div class="form-control md:col-span-2">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Billing Address</span>
+                            </label>
+                            <textarea id="client_address" 
+                                      rows="3"
+                                      placeholder="Client Billing Address"
+                                      class="textarea textarea-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items Section -->
+            <div class="card bg-white shadow-lg border border-gray-100">
+                <div class="card-body p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                            </svg>
+                            Invoice Items
+                        </h2>
+                        <button onclick="addItem()" class="btn btn-sm bg-main text-white hover:bg-main/90">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Add Item
+                        </button>
+                    </div>
+                    
+                    <!-- Items Table -->
+                    <div class="overflow-x-auto">
+                        <table class="table w-full">
+                            <thead>
+                                <tr class="bg-main text-white">
+                                    <th class="text-white">Description</th>
+                                    <th class="text-white text-center w-24">Qty</th>
+                                    <th class="text-white text-right w-32">Rate</th>
+                                    <th class="text-white text-right w-32">Amount</th>
+                                    <th class="text-white text-center w-16">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="items-table-body">
+                                <!-- Items will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Add First Item Button (shown when no items) -->
+                    <div id="empty-items-state" class="text-center py-8">
+                        <div class="w-16 h-16 bg-faded rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">No items added yet</h3>
+                        <p class="text-gray-600 mb-4">Add items or services to your invoice</p>
+                        <button onclick="addItem()" class="btn bg-main text-white hover:bg-main/90">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Add Your First Item
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment & Notes -->
+            <div class="card bg-white shadow-lg border border-gray-100">
+                <div class="card-body p-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                        </svg>
+                        Payment Terms & Notes
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Payment Terms</span>
+                            </label>
+                            <select id="payment_terms" class="select select-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                                <option value="net_15">Net 15 days</option>
+                                <option value="net_30" selected>Net 30 days</option>
+                                <option value="net_60">Net 60 days</option>
+                                <option value="due_on_receipt">Due on receipt</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-gray-700">Currency</span>
+                            </label>
+                            <select id="currency" class="select select-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                                <option value="USD" selected>USD ($)</option>
+                                <option value="EUR">EUR (€)</option>
+                                <option value="GBP">GBP (£)</option>
+                                <option value="ZWL">ZWL (Z$)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-control mb-4">
+                        <label class="label">
+                            <span class="label-text font-medium text-gray-700">Payment Instructions</span>
+                        </label>
+                        <textarea id="payment_instructions" 
+                                  rows="3"
+                                  placeholder="Bank details, payment methods, or specific instructions..."
+                                  class="textarea textarea-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"></textarea>
+                    </div>
+                    
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-medium text-gray-700">Additional Notes</span>
+                        </label>
+                        <textarea id="additional_notes" 
+                                  rows="3"
+                                  placeholder="Any additional information or notes for the client..."
+                                  class="textarea textarea-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Panel -->
+        <div class="xl:col-span-1">
+            <div class="card bg-white shadow-lg border border-gray-100 sticky top-6">
+                <div class="card-body p-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                        Invoice Summary
+                    </h2>
+                    
+                    <!-- Status Badge -->
+                    <div class="mb-4">
+                        <div class="badge badge-outline" id="status-badge">Draft</div>
+                    </div>
+                    
+                    <!-- Calculations -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Subtotal:</span>
+                            <span id="subtotal-display" class="font-medium">$0.00</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 text-sm">Discount:</span>
+                            <div class="flex items-center gap-2">
+                                <input type="number" 
+                                       id="discount_percent"
+                                       min="0" 
+                                       max="100" 
+                                       placeholder="0"
+                                       class="input input-bordered input-sm w-16 text-right">
+                                <span class="text-sm text-gray-600">%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Discount Amount:</span>
+                            <span id="discount-display" class="font-medium text-red-600">-$0.00</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 text-sm">Tax:</span>
+                            <div class="flex items-center gap-2">
+                                <input type="number" 
+                                       id="tax_percent"
+                                       min="0" 
+                                       max="100" 
+                                       placeholder="0"
+                                       class="input input-bordered input-sm w-16 text-right">
+                                <span class="text-sm text-gray-600">%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Tax Amount:</span>
+                            <span id="tax-display" class="font-medium">$0.00</span>
+                        </div>
+                        
+                        <div class="divider my-2"></div>
+                        
+                        <div class="flex justify-between text-lg font-bold">
+                            <span class="text-main">Total Amount Due:</span>
+                            <span id="total-display" class="text-main">$0.00</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="space-y-3 mt-6">
+                        <button onclick="previewInvoice()" class="btn bg-main text-white hover:bg-main/90 w-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            Preview & Send
+                        </button>
+                        
+                        <button onclick="saveInvoice()" class="btn btn-outline w-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            Save Draft
+                        </button>
+                        
+                        <button onclick="markAsPaid()" class="btn btn-outline btn-success w-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Mark as Paid
+                        </button>
+                        
+                        <button onclick="clearInvoice()" class="btn btn-outline btn-error w-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Clear All
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<dialog id="previewModal" class="modal">
+    <div class="modal-box w-11/12 max-w-6xl max-h-full">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-lg">Invoice Preview</h3>
+            <div class="flex gap-2">
+                <button onclick="printInvoice()" class="btn btn-sm btn-outline">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a1 1 0 001-1v-4a1 1 0 00-1-1H9a1 1 0 00-1 1v4a1 1 0 001 1z" />
+                    </svg>
+                    Print
+                </button>
+                <button onclick="document.getElementById('previewModal').close()" class="btn btn-sm btn-square btn-outline">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Preview Content -->
+        <div id="invoice-preview" class="bg-white p-8 border rounded-lg">
+            <!-- Preview will be generated here -->
+        </div>
+        
+        <div class="modal-action">
+            <button onclick="sendInvoice()" class="btn bg-main text-white hover:bg-main/90">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+                Send Invoice
+            </button>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
+
+<script>
+let itemCounter = 0;
+let items = [];
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', function() {
+    // Set default dates
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('issue_date').value = today;
+    
+    // Set default due date (30 days from now)
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 30);
+    document.getElementById('due_date').value = dueDate.toISOString().split('T')[0];
+    
+    // Generate invoice number
+    document.getElementById('invoice_number').value = generateInvoiceNumber();
+    
+    // Add event listeners for calculations
+    document.getElementById('discount_percent').addEventListener('input', calculateTotals);
+    document.getElementById('tax_percent').addEventListener('input', calculateTotals);
+    document.getElementById('invoice_status').addEventListener('change', updateStatusBadge);
+    
+    // Show empty state
+    updateItemsDisplay();
+    updateStatusBadge();
+});
+
+function generateInvoiceNumber() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return `INV-${year}-${month}-${random}`;
+}
+
+function updateStatusBadge() {
+    const status = document.getElementById('invoice_status').value;
+    const badge = document.getElementById('status-badge');
+    
+    // Reset classes
+    badge.className = 'badge';
+    
+    switch (status) {
+        case 'draft':
+            badge.className += ' badge-outline';
+            badge.textContent = 'Draft';
+            break;
+        case 'sent':
+            badge.className += ' badge-info';
+            badge.textContent = 'Sent';
+            break;
+        case 'paid':
+            badge.className += ' badge-success';
+            badge.textContent = 'Paid';
+            break;
+        case 'overdue':
+            badge.className += ' badge-error';
+            badge.textContent = 'Overdue';
+            break;
+        case 'cancelled':
+            badge.className += ' badge-warning';
+            badge.textContent = 'Cancelled';
+            break;
+    }
+}
+
+function addItem() {
+    const item = {
+        id: ++itemCounter,
+        description: '',
+        quantity: 1,
+        rate: 0,
+        amount: 0
+    };
+    items.push(item);
+    updateItemsDisplay();
+    calculateTotals();
+}
+
+function removeItem(id) {
+    items = items.filter(item => item.id !== id);
+    updateItemsDisplay();
+    calculateTotals();
+}
+
+function updateItemsDisplay() {
+    const tbody = document.getElementById('items-table-body');
+    const emptyState = document.getElementById('empty-items-state');
+    
+    if (items.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+    }
+    
+    emptyState.style.display = 'none';
+    
+    tbody.innerHTML = items.map(item => `
+        <tr>
+            <td>
+                <input type="text" 
+                       value="${item.description}"
+                       placeholder="Product or service description"
+                       class="input input-bordered input-sm w-full"
+                       onchange="updateItem(${item.id}, 'description', this.value)">
+            </td>
+            <td>
+                <input type="number" 
+                       value="${item.quantity}"
+                       min="1"
+                       class="input input-bordered input-sm w-full text-center"
+                       onchange="updateItem(${item.id}, 'quantity', parseFloat(this.value) || 1)">
+            </td>
+            <td>
+                <input type="number" 
+                       value="${item.rate}"
+                       min="0"
+                       step="0.01"
+                       class="input input-bordered input-sm w-full text-right"
+                       onchange="updateItem(${item.id}, 'rate', parseFloat(this.value) || 0)">
+            </td>
+            <td class="text-right font-medium">$${item.amount.toFixed(2)}</td>
+            <td class="text-center">
+                <button class="btn btn-square btn-sm btn-outline btn-error" onclick="removeItem(${item.id})">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function updateItem(id, field, value) {
+    const item = items.find(i => i.id === id);
+    if (item) {
+        item[field] = value;
+        if (field === 'quantity' || field === 'rate') {
+            item.amount = item.quantity * item.rate;
+        }
+        updateItemsDisplay();
+        calculateTotals();
+    }
+}
+
+function calculateTotals() {
+    const subtotal = items.reduce((sum, item) => sum + item.amount, 0);
+    const discountPercent = parseFloat(document.getElementById('discount_percent').value) || 0;
+    const taxPercent = parseFloat(document.getElementById('tax_percent').value) || 0;
+    
+    const discountAmount = subtotal * (discountPercent / 100);
+    const subtotalAfterDiscount = subtotal - discountAmount;
+    const taxAmount = subtotalAfterDiscount * (taxPercent / 100);
+    const total = subtotalAfterDiscount + taxAmount;
+    
+    document.getElementById('subtotal-display').textContent = `$${subtotal.toFixed(2)}`;
+    document.getElementById('discount-display').textContent = `-$${discountAmount.toFixed(2)}`;
+    document.getElementById('tax-display').textContent = `$${taxAmount.toFixed(2)}`;
+    document.getElementById('total-display').textContent = `$${total.toFixed(2)}`;
+}
+
+function previewInvoice() {
+    const preview = generatePreviewHTML();
+    document.getElementById('invoice-preview').innerHTML = preview;
+    document.getElementById('previewModal').showModal();
+}
+
+function generatePreviewHTML() {
+    const invoiceNumber = document.getElementById('invoice_number').value;
+    const issueDate = document.getElementById('issue_date').value;
+    const dueDate = document.getElementById('due_date').value;
+    const status = document.getElementById('invoice_status').value;
+    const clientName = document.getElementById('client_name').value;
+    const contactPerson = document.getElementById('contact_person').value;
+    const clientEmail = document.getElementById('client_email').value;
+    const clientPhone = document.getElementById('client_phone').value;
+    const clientAddress = document.getElementById('client_address').value;
+    const paymentInstructions = document.getElementById('payment_instructions').value;
+    const notes = document.getElementById('additional_notes').value;
+    const purchaseOrder = document.getElementById('purchase_order').value;
+    
+    const subtotal = items.reduce((sum, item) => sum + item.amount, 0);
+    const discountPercent = parseFloat(document.getElementById('discount_percent').value) || 0;
+    const taxPercent = parseFloat(document.getElementById('tax_percent').value) || 0;
+    const discountAmount = subtotal * (discountPercent / 100);
+    const subtotalAfterDiscount = subtotal - discountAmount;
+    const taxAmount = subtotalAfterDiscount * (taxPercent / 100);
+    const total = subtotalAfterDiscount + taxAmount;
+    
+    const statusColors = {
+        'draft': 'bg-gray-100 text-gray-800',
+        'sent': 'bg-blue-100 text-blue-800',
+        'paid': 'bg-green-100 text-green-800',
+        'overdue': 'bg-red-100 text-red-800',
+        'cancelled': 'bg-yellow-100 text-yellow-800'
+    };
+    
+    return `
+        <!-- Header -->
+        <div class="flex justify-between items-start mb-8 pb-8 border-b-2 border-gray-200">
+            <div>
+                <div class="flex items-center gap-3 mb-4">
+                    <img src="{% static 'billingapp/images/logo.svg' %}" alt="PixelCrafte" class="h-12 w-12">
+                    <div>
+                        <h2 class="text-2xl font-bold text-main">PixelCrafte</h2>
+                        <p class="text-gray-600">Professional Billing Solutions</p>
+                    </div>
+                </div>
+                <div class="text-gray-600">
+                    <p>123 Business Avenue</p>
+                    <p>City, State 12345</p>
+                    <p>contact@pixelcrafte.com</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <div class="flex items-center justify-end gap-3 mb-4">
+                    <h1 class="text-4xl font-bold text-gray-800">INVOICE</h1>
+                    <span class="px-3 py-1 rounded-full text-xs font-medium ${statusColors[status]}">${status.toUpperCase()}</span>
+                </div>
+                <div class="space-y-1 text-sm">
+                    <div><span class="font-semibold">Invoice #:</span> ${invoiceNumber}</div>
+                    <div><span class="font-semibold">Issue Date:</span> ${new Date(issueDate).toLocaleDateString()}</div>
+                    <div><span class="font-semibold">Due Date:</span> ${new Date(dueDate).toLocaleDateString()}</div>
+                    ${purchaseOrder ? `<div><span class="font-semibold">PO #:</span> ${purchaseOrder}</div>` : ''}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bill To -->
+        <div class="mb-8">
+            <h3 class="font-semibold text-gray-500 mb-2">BILL TO:</h3>
+            <div class="text-gray-800">
+                <div class="font-bold text-lg">${clientName || 'Client Name'}</div>
+                ${contactPerson ? `<div>Attn: ${contactPerson}</div>` : ''}
+                ${clientEmail ? `<div>${clientEmail}</div>` : ''}
+                ${clientPhone ? `<div>${clientPhone}</div>` : ''}
+                ${clientAddress ? `<div class="whitespace-pre-line">${clientAddress}</div>` : ''}
+            </div>
+        </div>
+        
+        <!-- Items Table -->
+        <div class="mb-8">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-main text-white">
+                        <th class="text-left p-3">Description</th>
+                        <th class="text-center p-3 w-20">Qty</th>
+                        <th class="text-right p-3 w-24">Rate</th>
+                        <th class="text-right p-3 w-24">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${items.map(item => `
+                        <tr class="border-b">
+                            <td class="p-3">${item.description || 'Item description'}</td>
+                            <td class="p-3 text-center">${item.quantity}</td>
+                            <td class="p-3 text-right">$${item.rate.toFixed(2)}</td>
+                            <td class="p-3 text-right font-medium">$${item.amount.toFixed(2)}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Totals -->
+        <div class="flex justify-end mb-8">
+            <div class="w-64 space-y-2">
+                <div class="flex justify-between"><span>Subtotal:</span><span>$${subtotal.toFixed(2)}</span></div>
+                ${discountPercent > 0 ? `<div class="flex justify-between text-red-600"><span>Discount (${discountPercent}%):</span><span>-$${discountAmount.toFixed(2)}</span></div>` : ''}
+                ${taxPercent > 0 ? `<div class="flex justify-between"><span>Tax (${taxPercent}%):</span><span>$${taxAmount.toFixed(2)}</span></div>` : ''}
+                <div class="border-t-2 border-main pt-2">
+                    <div class="flex justify-between text-xl font-bold text-main">
+                        <span>AMOUNT DUE:</span><span>$${total.toFixed(2)}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Payment & Notes -->
+        ${paymentInstructions || notes ? `
+            <div class="space-y-4">
+                ${paymentInstructions ? `
+                    <div>
+                        <h4 class="font-semibold text-gray-500 mb-2">PAYMENT INSTRUCTIONS:</h4>
+                        <div class="text-gray-700 whitespace-pre-line">${paymentInstructions}</div>
+                    </div>
+                ` : ''}
+                ${notes ? `
+                    <div>
+                        <h4 class="font-semibold text-gray-500 mb-2">ADDITIONAL NOTES:</h4>
+                        <div class="text-gray-700 whitespace-pre-line">${notes}</div>
+                    </div>
+                ` : ''}
+            </div>
+        ` : ''}
+        
+        <!-- Footer -->
+        <div class="mt-8 pt-8 border-t text-center text-gray-500 text-sm">
+            <p>Thank you for your business!</p>
+        </div>
+    `;
+}
+
+function printInvoice() {
+    const printWindow = window.open('', '_blank');
+    const previewContent = document.getElementById('invoice-preview').innerHTML;
+    
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Invoice - ${document.getElementById('invoice_number').value}</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { padding: 8px; border-bottom: 1px solid #ddd; }
+                th { background-color: #5129CE; color: white; }
+                .text-right { text-align: right; }
+                .text-center { text-align: center; }
+                .font-bold { font-weight: bold; }
+                .mb-8 { margin-bottom: 2rem; }
+                .mb-4 { margin-bottom: 1rem; }
+                .mb-2 { margin-bottom: 0.5rem; }
+                .border-b-2 { border-bottom: 2px solid #e5e7eb; }
+                .pb-8 { padding-bottom: 2rem; }
+                .pt-2 { padding-top: 0.5rem; }
+                .space-y-1 > * + * { margin-top: 0.25rem; }
+                .space-y-2 > * + * { margin-top: 0.5rem; }
+                .space-y-4 > * + * { margin-top: 1rem; }
+                .whitespace-pre-line { white-space: pre-line; }
+            </style>
+        </head>
+        <body>
+            ${previewContent}
+        </body>
+        </html>
+    `);
+    
+    printWindow.document.close();
+    printWindow.print();
+}
+
+function saveInvoice() {
+    // Implementation for saving invoice
+    alert('Invoice saved as draft!');
+}
+
+function sendInvoice() {
+    // Implementation for sending invoice
+    alert('Invoice sent to client!');
+    document.getElementById('previewModal').close();
+}
+
+function markAsPaid() {
+    if (confirm('Mark this invoice as paid?')) {
+        document.getElementById('invoice_status').value = 'paid';
+        updateStatusBadge();
+        alert('Invoice marked as paid!');
+    }
+}
+
+function clearInvoice() {
+    if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+        // Clear all form fields
+        document.getElementById('invoice_number').value = generateInvoiceNumber();
+        document.getElementById('client_name').value = '';
+        document.getElementById('contact_person').value = '';
+        document.getElementById('client_email').value = '';
+        document.getElementById('client_phone').value = '';
+        document.getElementById('client_address').value = '';
+        document.getElementById('payment_instructions').value = '';
+        document.getElementById('additional_notes').value = '';
+        document.getElementById('purchase_order').value = '';
+        document.getElementById('discount_percent').value = '';
+        document.getElementById('tax_percent').value = '';
+        document.getElementById('invoice_status').value = 'draft';
+        
+        // Clear items
+        items = [];
+        itemCounter = 0;
+        updateItemsDisplay();
+        calculateTotals();
+        updateStatusBadge();
+    }
+}
+</script>
+
+<style>
+.input:focus, .textarea:focus, .select:focus {
+    box-shadow: 0 0 0 3px rgba(81, 41, 206, 0.1);
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #invoice-preview, #invoice-preview * {
+        visibility: visible;
+    }
+    #invoice-preview {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
