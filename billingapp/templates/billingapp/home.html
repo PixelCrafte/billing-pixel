@@ -1,222 +1,251 @@
-<!DOCTYPE html>
+{% extends 'billingapp/base.html' %}
+{% load static %}
 
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Crafte Billing - Effortless Invoicing</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <style>
-        /* Define a custom font family to be used across the site */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-    </style>
+{% block title %}PixelCrafte Billing - Effortless Invoicing for Modern Creatives{% endblock %}
 
-    <script>
-        // Configuration for Tailwind CSS JIT compiler
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        // Custom color palette for your application
-                        'main': '#5129CE',
-                        'accent': '#8D86FC',
-                        'faded': '#EBE4FE',
-                    }
-                }
-            }
-        }
-    </script>
-</head>
-<body class="bg-white text-gray-800">
+{% block description %}Create professional invoices, receipts, and quotations in minutes. Simple, powerful, and beautiful invoicing for the modern world.{% endblock %}
 
-    <!-- Header Section -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- Logo -->
-            <a href="#" class="text-2xl font-bold text-main">
-                <i class="fas fa-file-invoice-dollar mr-2"></i>
-                Pixel Crafte Billing
-            </a>
-            
-            <!-- Desktop Navigation Links -->
-            <div class="hidden md:flex items-center space-x-6">
-                <a href="#features" class="text-gray-600 hover:text-main transition duration-300">Features</a>
-                <a href="#pricing" class="text-gray-600 hover:text-main transition duration-300">Pricing</a>
-                <a href="#" class="text-gray-600 hover:text-main transition duration-300">Contact</a>
-                {# {% if user.is_authenticated %} #}
-                <!-- <a href="/dashboard" class="py-2 px-4 bg-main text-white rounded-lg hover:bg-opacity-90 transition duration-300">Dashboard</a> -->
-                {# {% else %} #}
-                <a href="#" class="text-main font-semibold hover:underline">Log In</a>
-                <a href="#" class="py-2 px-4 bg-accent text-white rounded-lg hover:bg-opacity-90 transition duration-300 shadow-md">Sign Up Free</a>
-                {# {% endif %} #}
-            </div>
+{% block content %}
+<!-- Override the typical app layout for landing page -->
+<style>
+    /* Hide sidebar and adjust layout for landing page */
+    #sidebar { display: none; }
+    main { margin-left: 0; }
+    .navbar { display: none; }
+    body { background: white; }
+</style>
 
-            <!-- Mobile Menu Button -->
-            <div class="md:hidden">
-                <button id="mobile-menu-button" class="text-main focus:outline-none">
-                    <i class="fas fa-bars text-2xl"></i>
-                </button>
-            </div>
-        </nav>
+<!-- Landing Page Header -->
+<header class="bg-white shadow-sm sticky top-0 z-50">
+    <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <!-- Logo -->
+        <a href="" class="text-2xl font-bold text-main flex items-center gap-2">
+            <img src="{% static 'billingapp/images/logo.svg' %}" alt="PixelCrafte" class="h-8 w-8">
+            PixelCrafte Billing
+        </a>
         
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4 space-y-2">
-            <a href="#features" class="block text-gray-600 hover:text-main transition duration-300">Features</a>
-            <a href="#pricing" class="block text-gray-600 hover:text-main transition duration-300">Pricing</a>
-            <a href="#" class="block text-gray-600 hover:text-main transition duration-300">Contact</a>
-            <hr class="my-2">
-            <a href="#" class="block text-main font-semibold hover:underline">Log In</a>
-            <a href="#" class="block w-full text-center py-2 px-4 bg-accent text-white rounded-lg hover:bg-opacity-90 transition duration-300 shadow-md">Sign Up Free</a>
+        <!-- Desktop Navigation Links -->
+        <div class="hidden md:flex items-center space-x-6">
+            <a href="#features" class="text-gray-600 hover:text-main transition duration-300">Features</a>
+            <a href="#pricing" class="text-gray-600 hover:text-main transition duration-300">Pricing</a>
+            <a href="#contact" class="text-gray-600 hover:text-main transition duration-300">Contact</a>
+            {% if user.is_authenticated %}
+                <a href="" class="py-2 px-4 bg-main text-white rounded-lg hover:bg-main/90 transition duration-300">Dashboard</a>
+            {% else %}
+                <a href="" class="text-main font-semibold hover:underline">Log In</a>
+                <a href="" class="py-2 px-4 bg-accent text-white rounded-lg hover:bg-accent/90 transition duration-300 shadow-md">Sign Up Free</a>
+            {% endif %}
         </div>
-    </header>
 
-    <!-- Main Content -->
-    <main>
-        <!-- Hero Section -->
-        <section class="bg-faded py-20 md:py-32">
-            <div class="container mx-auto px-6 text-center">
-                <h1 class="text-4xl md:text-6xl font-extrabold text-main leading-tight mb-4">
-                    Effortless Invoicing for Modern Creatives
-                </h1>
-                <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-                    Stop chasing payments and start focusing on what you do best. Create and send professional invoices, receipts, and quotations in minutes.
+        <!-- Mobile Menu Button -->
+        <div class="md:hidden">
+            <button id="mobile-menu-button" class="text-main focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+    </nav>
+    
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4 space-y-2 border-t border-gray-100">
+        <a href="#features" class="block text-gray-600 hover:text-main transition duration-300 py-2">Features</a>
+        <a href="#pricing" class="block text-gray-600 hover:text-main transition duration-300 py-2">Pricing</a>
+        <a href="#contact" class="block text-gray-600 hover:text-main transition duration-300 py-2">Contact</a>
+        <hr class="my-2">
+        {% if user.is_authenticated %}
+            <a href="" class="block w-full text-center py-2 px-4 bg-main text-white rounded-lg hover:bg-main/90 transition duration-300">Dashboard</a>
+        {% else %}
+            <a href="" class="block text-main font-semibold hover:underline py-2">Log In</a>
+            <a href="" class="block w-full text-center py-2 px-4 bg-accent text-white rounded-lg hover:bg-accent/90 transition duration-300 shadow-md">Sign Up Free</a>
+        {% endif %}
+    </div>
+</header>
+
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-faded via-white to-accent/20 py-20 md:py-32">
+    <div class="container mx-auto px-6 text-center">
+        <h1 class="text-4xl md:text-6xl font-extrabold text-main leading-tight mb-4">
+            Effortless Invoicing for Modern Creatives
+        </h1>
+        <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+            Stop chasing payments and start focusing on what you do best. Create and send professional invoices, receipts, and quotations in minutes.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="" class="py-3 px-8 bg-main text-white font-semibold rounded-lg shadow-lg hover:bg-main/90 transform hover:scale-105 transition duration-300">
+                Get Started for Free
+            </a>
+            <a href="#features" class="py-3 px-8 bg-white text-main font-semibold rounded-lg shadow-lg hover:bg-gray-50 transform hover:scale-105 transition duration-300 border border-main/20">
+                Learn More
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-20 bg-white">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Everything You Need, Nothing You Don't</h2>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">Powerful features to streamline your billing process and help you get paid faster.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="text-center p-8 bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition duration-300">
+                <div class="flex items-center justify-center h-16 w-16 rounded-full bg-faded text-main mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800">Professional Invoices</h3>
+                <p class="text-gray-600">
+                    Create beautiful, branded invoices that your clients will love to receive. Customize with your logo and colors.
                 </p>
-                <div class="flex justify-center space-x-4">
-                    <a href="#" class="py-3 px-8 bg-main text-white font-semibold rounded-lg shadow-lg hover:bg-opacity-90 transform hover:scale-105 transition duration-300">
-                        Get Started for Free
-                    </a>
-                    <a href="#features" class="py-3 px-8 bg-white text-main font-semibold rounded-lg shadow-lg hover:bg-gray-100 transform hover:scale-105 transition duration-300">
-                        Learn More
-                    </a>
-                </div>
             </div>
-        </section>
-
-        <!-- Features Section -->
-        <section id="features" class="py-20">
-            <div class="container mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Everything You Need, Nothing You Don't</h2>
-                    <p class="text-gray-500 mt-2">Powerful features to streamline your billing process.</p>
+            <!-- Feature 2 -->
+            <div class="text-center p-8 bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition duration-300">
+                <div class="flex items-center justify-center h-16 w-16 rounded-full bg-faded text-main mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-                    <!-- Feature 1 -->
-                    <div class="text-center p-8 bg-white rounded-xl shadow-lg border border-gray-100">
-                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-faded text-main mx-auto mb-4">
-                            <i class="fas fa-file-invoice fa-2x"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Professional Invoices</h3>
-                        <p class="text-gray-600">
-                            Create beautiful, branded invoices that your clients will love to receive.
-                        </p>
-                    </div>
-                    <!-- Feature 2 -->
-                    <div class="text-center p-8 bg-white rounded-xl shadow-lg border border-gray-100">
-                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-faded text-main mx-auto mb-4">
-                            <i class="fas fa-receipt fa-2x"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Instant Receipts</h3>
-                        <p class="text-gray-600">
-                            Automatically generate and send receipts once an invoice is paid, keeping everyone in the loop.
-                        </p>
-                    </div>
-                    <!-- Feature 3 -->
-                    <div class="text-center p-8 bg-white rounded-xl shadow-lg border border-gray-100">
-                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-faded text-main mx-auto mb-4">
-                            <i class="fas fa-file-signature fa-2x"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Clear Quotations</h3>
-                        <p class="text-gray-600">
-                            Send clear, detailed quotations to your clients to win projects faster than ever.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Call to Action Section -->
-        <section class="bg-main text-white">
-            <div class="container mx-auto px-6 py-20 text-center">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to Simplify Your Billing?</h2>
-                <p class="text-lg text-indigo-200 mb-8 max-w-2xl mx-auto">
-                    Join hundreds of freelancers and small businesses who trust Pixel Crafte Billing.
+                <h3 class="text-xl font-semibold mb-3 text-gray-800">Instant Receipts</h3>
+                <p class="text-gray-600">
+                    Automatically generate and send receipts once an invoice is paid, keeping everyone in the loop and organized.
                 </p>
-                <a href="#" class="py-3 px-8 bg-white text-main font-bold rounded-lg shadow-xl hover:bg-gray-100 transform hover:scale-105 transition duration-300">
-                    Sign Up Now - It's Free!
+            </div>
+            <!-- Feature 3 -->
+            <div class="text-center p-8 bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition duration-300">
+                <div class="flex items-center justify-center h-16 w-16 rounded-full bg-faded text-main mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800">Clear Quotations</h3>
+                <p class="text-gray-600">
+                    Send clear, detailed quotations to your clients to win projects faster than ever before.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section id="pricing" class="py-20 bg-gray-50">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Simple, Transparent Pricing</h2>
+            <p class="text-gray-600 text-lg">Choose the plan that works best for your business</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <!-- Free Plan -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-8 relative">
+                <div class="text-center">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Free</h3>
+                    <div class="text-4xl font-bold text-main mb-2">$0<span class="text-lg text-gray-600">/month</span></div>
+                    <p class="text-gray-600 mb-6">Perfect for getting started</p>
+                </div>
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-center">
+                        <svg class="h-5 w-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Up to 5 invoices per month
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="h-5 w-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Basic templates
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="h-5 w-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Email support
+                    </li>
+                </ul>
+                <a href="{% url 'billingapp:signup' %}" class="block w-full text-center py-3 px-6 bg-gray-100 text-gray-800 font-semibold rounded-lg hover:bg-gray-200 transition duration-300">
+                    Get Started Free
                 </a>
             </div>
-        </section>
-    </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white">
-        <div class="container mx-auto px-6 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <!-- About -->
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Pixel Crafte Billing</h4>
-                    <p class="text-gray-400">
-                        Simple, powerful, and beautiful invoicing for the modern world.
-                    </p>
+            <!-- Pro Plan -->
+            <div class="bg-white rounded-xl shadow-xl border-2 border-main p-8 relative">
+                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    <span class="bg-main text-white px-4 py-1 rounded-full text-sm font-semibold">Most Popular</span>
                 </div>
-                <!-- Links -->
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Links</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white">About Us</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Features</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Pricing</a></li>
-                    </ul>
+                <div class="text-center">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Pro</h3>
+                    <div class="text-4xl font-bold text-main mb-2">$19<span class="text-lg text-gray-600">/month</span></div>
+                    <p class="text-gray-600 mb-6">For growing businesses</p>
                 </div>
-                <!-- Legal -->
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Legal</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                    </ul>
-                </div>
-                <!-- Social -->
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Connect With Us</h4>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter fa-lg"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-github fa-lg"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin fa-lg"></i></a>
-                    </div>
-                </div>
-            </div>
-            <hr class="border-gray-700 my-8">
-            <div class="text-center text-gray-500">
-                &copy; 2024 Pixel Crafte Billing. All Rights Reserved.
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-center">
+                        <svg class="h-5 w-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Unlimited invoices
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="h-5 w-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Custom branding
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="h-5 w-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Advanced analytics
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="h-5 w-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Priority support
+                    </li>
+                </ul>
+                <a href="{% url 'billingapp:signup' %}" class="block w-full text-center py-3 px-6 bg-main text-white font-semibold rounded-lg hover:bg-main/90 transition duration-300 shadow-lg">
+                    Start Pro Trial
+                </a>
             </div>
         </div>
-    </footer>
+    </div>
+</section>
 
-    <!-- JavaScript for Mobile Menu Toggle -->
-    <script>
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            var menu = document.getElementById('mobile-menu');
-            if (menu.classList.contains('hidden')) {
-                menu.classList.remove('hidden');
-            } else {
-                menu.classList.add('hidden');
+<!-- Call to Action Section -->
+<section class="bg-main text-white py-20">
+    <div class="container mx-auto px-6 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to Simplify Your Billing?</h2>
+        <p class="text-lg text-indigo-200 mb-8 max-w-2xl mx-auto">
+            Join hundreds of freelancers and small businesses who trust PixelCrafte Billing to get paid faster.
+        </p>
+        <a href="" class="py-4 px-8 bg-white text-main font-bold rounded-lg shadow-xl hover:bg-gray-100 transform hover:scale-105 transition duration-300 inline-block">
+            Sign Up Now - It's Free!
+        </a>
+    </div>
+</section>
+
+<script>
+    // Mobile menu toggle
+    document.getElementById('mobile-menu-button').addEventListener('click', function() {
+        const menu = document.getElementById('mobile-menu');
+        menu.classList.toggle('hidden');
+    });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
             }
         });
-    </script>
-
-</body>
-</html>
+    });
+</script>
+{% endblock %}
