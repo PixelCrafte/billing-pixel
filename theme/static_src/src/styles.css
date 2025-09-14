@@ -2,6 +2,15 @@
 @plugin "daisyui";
 
 /**
+  * Custom color palette for the billing pixel app
+  */
+@theme {
+  --color-main: #5129CE;
+  --color-accent: #8D86FC;
+  --color-faded: #EBE4FE;
+}
+
+/**
   * A catch-all path to Django template files, JavaScript, and Python files
   * that contain Tailwind CSS classes and will be scanned by Tailwind to generate the final CSS file.
   *
