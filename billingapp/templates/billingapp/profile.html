@@ -251,71 +251,301 @@
 
 <!-- Create Company Modal -->
 <dialog id="createCompanyModal" class="modal">
-    <div class="modal-box w-11/12 max-w-2xl">
-        <h3 class="font-bold text-lg mb-4">Create New Company</h3>
+    <div class="modal-box w-11/12 max-w-4xl max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="font-bold text-xl">Create New Company</h3>
+            <button type="button" class="btn btn-sm btn-square btn-outline" onclick="document.getElementById('createCompanyModal').close()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        
         <form method="post" action="" enctype="multipart/form-data">
             {% csrf_token %}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="form-control md:col-span-2">
-                    <label class="label">
-                        <span class="label-text font-medium">Company Name *</span>
-                    </label>
-                    <input type="text" name="name" class="input input-bordered" required>
+            
+            <!-- Basic Company Information -->
+            <div class="card bg-gray-50 border border-gray-200 mb-6">
+                <div class="card-body p-4">
+                    <h4 class="font-semibold text-lg mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                        Basic Information
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control md:col-span-2">
+                            <label class="label">
+                                <span class="label-text font-medium">Company Name *</span>
+                            </label>
+                            <input type="text" name="name" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20" required>
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Industry</span>
+                            </label>
+                            <select name="industry" class="select select-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                                <option value="">Select Industry</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Consulting">Consulting</option>
+                                <option value="Design">Design</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Education">Education</option>
+                                <option value="Retail">Retail</option>
+                                <option value="Manufacturing">Manufacturing</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Company Logo</span>
+                            </label>
+                            <input type="file" name="logo" accept="image/*" class="file-input file-input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text font-medium">Industry</span>
-                    </label>
-                    <select name="industry" class="select select-bordered">
-                        <option value="">Select Industry</option>
-                        <option value="Technology">Technology</option>
-                        <option value="Consulting">Consulting</option>
-                        <option value="Design">Design</option>
-                        <option value="Marketing">Marketing</option>
-                        <option value="Other">Other</option>
-                    </select>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="card bg-gray-50 border border-gray-200 mb-6">
+                <div class="card-body p-4">
+                    <h4 class="font-semibold text-lg mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        Contact Information
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Business Email *</span>
+                            </label>
+                            <input type="email" name="email" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20" required>
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Business Phone *</span>
+                            </label>
+                            <input type="tel" name="phone" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20" required>
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Fax Number</span>
+                            </label>
+                            <input type="tel" name="fax" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Website</span>
+                            </label>
+                            <input type="url" name="website" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20" placeholder="https://">
+                        </div>
+                        
+                        <div class="form-control md:col-span-2">
+                            <label class="label">
+                                <span class="label-text font-medium">Business Address *</span>
+                            </label>
+                            <textarea name="address" class="textarea textarea-bordered focus:border-main focus:ring-2 focus:ring-main/20" rows="3" required 
+                                      placeholder="Street address, City, State/Province, Postal Code, Country"></textarea>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text font-medium">Company Logo</span>
-                    </label>
-                    <input type="file" name="logo" accept="image/*" class="file-input file-input-bordered">
+            </div>
+
+            <!-- Billing Defaults -->
+            <div class="card bg-gray-50 border border-gray-200 mb-6">
+                <div class="card-body p-4">
+                    <h4 class="font-semibold text-lg mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                        Billing Defaults
+                        <span class="text-sm font-normal text-gray-600">(These will auto-fill in quotations, invoices & receipts)</span>
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Default Currency</span>
+                            </label>
+                            <select name="default_currency" class="select select-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                                <option value="USD" selected>USD ($)</option>
+                                <option value="EUR">EUR (€)</option>
+                                <option value="GBP">GBP (£)</option>
+                                <option value="ZWL">ZWL (Z$)</option>
+                                <option value="CAD">CAD (C$)</option>
+                                <option value="AUD">AUD (A$)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Default Tax Rate (%)</span>
+                            </label>
+                            <input type="number" name="default_tax_rate" min="0" max="100" step="0.01" 
+                                   class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20" placeholder="0.00">
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Default Payment Terms</span>
+                            </label>
+                            <select name="default_payment_terms" class="select select-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                                <option value="net_15">Net 15 days</option>
+                                <option value="net_30" selected>Net 30 days</option>
+                                <option value="net_60">Net 60 days</option>
+                                <option value="due_on_receipt">Due on receipt</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Invoice/Quote Validity (Days)</span>
+                            </label>
+                            <input type="number" name="quote_validity_days" min="1" max="365" 
+                                   value="30" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                        </div>
+
+                        <div class="form-control md:col-span-2">
+                            <label class="label">
+                                <span class="label-text font-medium">Default Terms & Conditions</span>
+                            </label>
+                            <textarea name="default_terms" class="textarea textarea-bordered focus:border-main focus:ring-2 focus:ring-main/20" rows="3" 
+                                      placeholder="Standard terms and conditions that will appear on all documents..."></textarea>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text font-medium">Email</span>
-                    </label>
-                    <input type="email" name="email" class="input input-bordered">
+            </div>
+
+            <!-- Banking & Payment Information -->
+            <div class="card bg-gray-50 border border-gray-200 mb-6">
+                <div class="card-body p-4">
+                    <h4 class="font-semibold text-lg mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                        </svg>
+                        Banking & Payment Information
+                        <span class="text-sm font-normal text-gray-600">(For payment instructions on invoices)</span>
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Bank Name</span>
+                            </label>
+                            <input type="text" name="bank_name" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Account Holder Name</span>
+                            </label>
+                            <input type="text" name="account_holder_name" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Account Number</span>
+                            </label>
+                            <input type="text" name="account_number" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Routing/Sort Code</span>
+                            </label>
+                            <input type="text" name="routing_number" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">SWIFT/BIC Code</span>
+                            </label>
+                            <input type="text" name="swift_code" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">IBAN</span>
+                            </label>
+                            <input type="text" name="iban" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                        </div>
+
+                        <div class="form-control md:col-span-2">
+                            <label class="label">
+                                <span class="label-text font-medium">Payment Instructions</span>
+                            </label>
+                            <textarea name="payment_instructions" class="textarea textarea-bordered focus:border-main focus:ring-2 focus:ring-main/20" rows="3" 
+                                      placeholder="Additional payment instructions (e.g., reference requirements, alternative payment methods...)"></textarea>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text font-medium">Phone</span>
-                    </label>
-                    <input type="tel" name="phone" class="input input-bordered">
-                </div>
-                
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text font-medium">Website</span>
-                    </label>
-                    <input type="url" name="website" class="input input-bordered" placeholder="https://">
-                </div>
-                
-                <div class="form-control md:col-span-2">
-                    <label class="label">
-                        <span class="label-text font-medium">Address</span>
-                    </label>
-                    <textarea name="address" class="textarea textarea-bordered" rows="3"></textarea>
+            </div>
+
+            <!-- Business Registration Details -->
+            <div class="card bg-gray-50 border border-gray-200 mb-6">
+                <div class="card-body p-4">
+                    <h4 class="font-semibold text-lg mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Business Registration Details
+                        <span class="text-sm font-normal text-gray-600">(Optional - for legal documentation)</span>
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Business Registration Number</span>
+                            </label>
+                            <input type="text" name="business_registration_number" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Tax ID / VAT Number</span>
+                            </label>
+                            <input type="text" name="tax_id" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Business Type</span>
+                            </label>
+                            <select name="business_type" class="select select-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                                <option value="">Select Business Type</option>
+                                <option value="sole_proprietorship">Sole Proprietorship</option>
+                                <option value="partnership">Partnership</option>
+                                <option value="llc">LLC</option>
+                                <option value="corporation">Corporation</option>
+                                <option value="nonprofit">Non-Profit</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Date Established</span>
+                            </label>
+                            <input type="date" name="date_established" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <div class="modal-action">
                 <button type="button" class="btn btn-outline" onclick="document.getElementById('createCompanyModal').close()">Cancel</button>
-                <button type="submit" class="btn bg-main text-white hover:bg-main/90">Create Company</button>
+                <button type="submit" class="btn bg-main text-white hover:bg-main/90">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Create Company
+                </button>
             </div>
         </form>
     </div>
