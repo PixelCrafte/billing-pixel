@@ -24,7 +24,19 @@
             <!-- Signup Form -->
             <div class="card bg-white shadow-xl border border-gray-100">
                 <div class="card-body p-8">
-                    <form method="post" class="space-y-6">
+                    <!-- Error Messages -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-error shadow-lg mb-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>{{ message }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" id="signupForm" class="space-y-6" novalidate>
                         {% csrf_token %}
                         
                         <!-- First Name Field -->
@@ -34,9 +46,13 @@
                             </label>
                             <input type="text" 
                                    name="first_name" 
+                                   id="firstName"
                                    placeholder="Enter your first name"
                                    class="input input-bordered w-full focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"
                                    required>
+                            <label class="label">
+                                <span class="label-text-alt text-error hidden" id="firstNameError"></span>
+                            </label>
                         </div>
 
                         <!-- Last Name Field -->
@@ -46,9 +62,13 @@
                             </label>
                             <input type="text" 
                                    name="last_name" 
+                                   id="lastName"
                                    placeholder="Enter your last name"
                                    class="input input-bordered w-full focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"
                                    required>
+                            <label class="label">
+                                <span class="label-text-alt text-error hidden" id="lastNameError"></span>
+                            </label>
                         </div>
 
                         <!-- Email Field -->
@@ -58,9 +78,13 @@
                             </label>
                             <input type="email" 
                                    name="email" 
+                                   id="email"
                                    placeholder="Enter your email"
                                    class="input input-bordered w-full focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"
                                    required>
+                            <label class="label">
+                                <span class="label-text-alt text-error hidden" id="emailError"></span>
+                            </label>
                         </div>
 
                         <!-- Password Field -->
@@ -68,13 +92,28 @@
                             <label class="label">
                                 <span class="label-text font-medium text-gray-700">Password</span>
                             </label>
-                            <input type="password" 
-                                   name="password" 
-                                   placeholder="Create a strong password"
-                                   class="input input-bordered w-full focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"
-                                   required>
-                            <label class="label">
-                                <span class="label-text-alt text-gray-500">Must be at least 8 characters</span>
+                            <div class="relative">
+                                <input type="password" 
+                                       name="password" 
+                                       id="password"
+                                       placeholder="Create a strong password"
+                                       class="input input-bordered w-full focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200 pr-10"
+                                       required>
+                                <button type="button" 
+                                        id="togglePassword"
+                                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                                    <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                    <svg id="eyeOffIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <label class="label flex flex-col items-start">
+                                <span class="label-text-alt" id="passwordStrength">Must be at least 8 characters</span>
+                                <span class="label-text-alt text-error hidden text-wrap" id="passwordError"></span>
                             </label>
                         </div>
 
@@ -85,21 +124,28 @@
                             </label>
                             <input type="password" 
                                    name="confirm_password" 
+                                   id="confirmPassword"
                                    placeholder="Confirm your password"
                                    class="input input-bordered w-full focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"
                                    required>
+                            <label class="label">
+                                <span class="label-text-alt text-error hidden" id="confirmPasswordError"></span>
+                            </label>
                         </div>
 
                         <!-- Terms and Conditions -->
                         <div class="form-control">
                             <label class="label cursor-pointer justify-start gap-3">
-                                <input type="checkbox" name="agree_terms" class="checkbox checkbox-sm border-gray-300 [--chkbg:theme(colors.main)] [--chkfg:white]" required>
+                                <input type="checkbox" name="agree_terms" id="agreeTerms" class="checkbox checkbox-sm border-gray-300 [--chkbg:theme(colors.main)] [--chkfg:white]" required>
                                 <span class="label-text text-gray-700 text-sm text-wrap">
                                     I agree to the 
                                     <a href="#" class="link text-main hover:text-main/80">Terms of Service</a> 
                                     and 
                                     <a href="#" class="link text-main hover:text-main/80">Privacy Policy</a>
                                 </span>
+                            </label>
+                            <label class="label">
+                                <span class="label-text-alt text-error hidden" id="termsError"></span>
                             </label>
                         </div>
 
@@ -115,8 +161,11 @@
 
                         <!-- Sign Up Button -->
                         <div class="form-control">
-                            <button type="submit" class="btn bg-main hover:bg-main/90 text-white border-none w-full font-semibold text-base h-12 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl">
-                                Create Account
+                            <button type="submit" 
+                                    id="signupButton"
+                                    class="btn bg-main hover:bg-main/90 text-white border-none w-full font-semibold text-base h-12 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl">
+                                <span id="signupButtonText">Create Account</span>
+                                <span id="signupSpinner" class="loading loading-spinner loading-sm hidden"></span>
                             </button>
                         </div>
 
@@ -137,18 +186,6 @@
                                 Sign up with Google
                             </button>
                         </div>
-
-                        <!-- Error Messages -->
-                        {% if messages %}
-                            {% for message in messages %}
-                                <div class="alert alert-error shadow-lg">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <span>{{ message }}</span>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
                     </form>
                 </div>
             </div>
@@ -165,47 +202,379 @@
         </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="bg-white rounded-lg p-6 flex items-center gap-3">
-            <span class="loading loading-spinner loading-md text-main"></span>
-            <span class="text-gray-700">Creating your account...</span>
-        </div>
-    </div>
-
     <script>
-        function handleGoogleSignup() {
-            // Show loading state
-            document.getElementById('loadingOverlay').classList.remove('hidden');
-            
-            // This is where you would implement Google OAuth for signup
-            // For now, we'll just simulate the process
-            setTimeout(() => {
-                alert('Google OAuth signup integration coming soon!');
-                document.getElementById('loadingOverlay').classList.add('hidden');
-            }, 1000);
-            
-            // In a real implementation, you would:
-            // 1. Initialize Google OAuth client
-            // 2. Handle the OAuth flow
-            // 3. Send the token to your Django backend
-            // 4. Create user account and redirect on success
+        // Form validation state
+        let validationState = {
+            firstName: false,
+            lastName: false,
+            email: false,
+            password: false,
+            confirmPassword: false,
+            terms: false
+        };
+
+        // DOM elements
+        const signupForm = document.getElementById('signupForm');
+        const firstNameInput = document.getElementById('firstName');
+        const lastNameInput = document.getElementById('lastName');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const agreeTermsInput = document.getElementById('agreeTerms');
+        const signupButton = document.getElementById('signupButton');
+        const signupButtonText = document.getElementById('signupButtonText');
+        const signupSpinner = document.getElementById('signupSpinner');
+        const togglePassword = document.getElementById('togglePassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const eyeOffIcon = document.getElementById('eyeOffIcon');
+        const passwordStrength = document.getElementById('passwordStrength');
+
+        // Error elements
+        const firstNameError = document.getElementById('firstNameError');
+        const lastNameError = document.getElementById('lastNameError');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const confirmPasswordError = document.getElementById('confirmPasswordError');
+        const termsError = document.getElementById('termsError');
+
+        // Validation functions
+        function validateName(name) {
+            return name.trim().length >= 2 && /^[a-zA-Z\s'-]+$/.test(name.trim());
         }
 
-        // Form submission handling
-        document.querySelector('form').addEventListener('submit', function(e) {
-            // Basic password confirmation check
-            const password = document.querySelector('input[name="password"]').value;
-            const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function validatePassword(password) {
+            // At least 8 characters, must contain uppercase, lowercase, number
+            return password.length >= 8 && 
+                   /[A-Z]/.test(password) && 
+                   /[a-z]/.test(password) && 
+                   /\d/.test(password);
+        }
+
+        function getPasswordStrength(password) {
+            let score = 0;
+            let feedback = '';
             
-            if (password !== confirmPassword) {
-                e.preventDefault();
-                alert('Passwords do not match. Please try again.');
-                return;
+            if (password.length >= 8) score++;
+            if (/[A-Z]/.test(password)) score++;
+            if (/[a-z]/.test(password)) score++;
+            if (/\d/.test(password)) score++;
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) score++;
+            
+            switch (score) {
+                case 0:
+                case 1:
+                    return { strength: 'weak', color: 'text-red-500', text: 'Weak password' };
+                case 2:
+                    return { strength: 'fair', color: 'text-orange-500', text: 'Fair password' };
+                case 3:
+                    return { strength: 'good', color: 'text-yellow-500', text: 'Good password' };
+                case 4:
+                    return { strength: 'strong', color: 'text-green-500', text: 'Strong password' };
+                case 5:
+                    return { strength: 'very-strong', color: 'text-green-600', text: 'Very strong password' };
+                default:
+                    return { strength: 'weak', color: 'text-gray-500', text: 'Must be at least 8 characters' };
+            }
+        }
+
+        function showError(input, errorElement, message) {
+            input.classList.add('input-error', 'border-error');
+            input.classList.remove('border-success');
+            errorElement.textContent = message;
+            errorElement.classList.remove('hidden');
+        }
+
+        function showSuccess(input, errorElement) {
+            input.classList.add('border-success');
+            input.classList.remove('input-error', 'border-error');
+            errorElement.classList.add('hidden');
+        }
+
+        function clearError(input, errorElement) {
+            input.classList.remove('input-error', 'border-error', 'border-success');
+            errorElement.classList.add('hidden');
+        }
+
+        function updateSubmitButton() {
+            const allValid = Object.values(validationState).every(valid => valid);
+            signupButton.disabled = !allValid;
+            if (allValid) {
+                signupButton.classList.remove('btn-disabled');
+                signupButton.classList.add('btn-active');
+            } else {
+                signupButton.classList.add('btn-disabled');
+                signupButton.classList.remove('btn-active');
+            }
+        }
+
+        // First Name validation
+        firstNameInput.addEventListener('input', function() {
+            const firstName = this.value.trim();
+            
+            if (firstName === '') {
+                clearError(this, firstNameError);
+                validationState.firstName = false;
+            } else if (!validateName(firstName)) {
+                showError(this, firstNameError, 'Please enter a valid first name (letters only, minimum 2 characters)');
+                validationState.firstName = false;
+            } else {
+                showSuccess(this, firstNameError);
+                validationState.firstName = true;
+            }
+            updateSubmitButton();
+        });
+
+        firstNameInput.addEventListener('blur', function() {
+            const firstName = this.value.trim();
+            if (firstName === '') {
+                showError(this, firstNameError, 'First name is required');
+                validationState.firstName = false;
+                updateSubmitButton();
+            }
+        });
+
+        // Last Name validation
+        lastNameInput.addEventListener('input', function() {
+            const lastName = this.value.trim();
+            
+            if (lastName === '') {
+                clearError(this, lastNameError);
+                validationState.lastName = false;
+            } else if (!validateName(lastName)) {
+                showError(this, lastNameError, 'Please enter a valid last name (letters only, minimum 2 characters)');
+                validationState.lastName = false;
+            } else {
+                showSuccess(this, lastNameError);
+                validationState.lastName = true;
+            }
+            updateSubmitButton();
+        });
+
+        lastNameInput.addEventListener('blur', function() {
+            const lastName = this.value.trim();
+            if (lastName === '') {
+                showError(this, lastNameError, 'Last name is required');
+                validationState.lastName = false;
+                updateSubmitButton();
+            }
+        });
+
+        // Email validation
+        emailInput.addEventListener('input', function() {
+            const email = this.value.trim();
+            
+            if (email === '') {
+                clearError(this, emailError);
+                validationState.email = false;
+            } else if (!validateEmail(email)) {
+                showError(this, emailError, 'Please enter a valid email address');
+                validationState.email = false;
+            } else {
+                showSuccess(this, emailError);
+                validationState.email = true;
+            }
+            updateSubmitButton();
+        });
+
+        emailInput.addEventListener('blur', function() {
+            const email = this.value.trim();
+            if (email === '') {
+                showError(this, emailError, 'Email address is required');
+                validationState.email = false;
+                updateSubmitButton();
+            }
+        });
+
+        // Password validation and strength indicator
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            const strength = getPasswordStrength(password);
+            
+            // Update strength indicator
+            passwordStrength.className = `label-text-alt ${strength.color}`;
+            passwordStrength.textContent = strength.text;
+            
+            if (password === '') {
+                clearError(this, passwordError);
+                validationState.password = false;
+                passwordStrength.className = 'label-text-alt text-gray-500';
+                passwordStrength.textContent = 'Must be at least 8 characters';
+            } else if (!validatePassword(password)) {
+                showError(this, passwordError, 'Password must be at least 8 characters with uppercase, lowercase, and number');
+                validationState.password = false;
+            } else {
+                showSuccess(this, passwordError);
+                validationState.password = true;
             }
             
-            document.getElementById('loadingOverlay').classList.remove('hidden');
+            // Re-validate confirm password if it has a value
+            if (confirmPasswordInput.value) {
+                const confirmPassword = confirmPasswordInput.value;
+                if (password !== confirmPassword) {
+                    showError(confirmPasswordInput, confirmPasswordError, 'Passwords do not match');
+                    validationState.confirmPassword = false;
+                } else {
+                    showSuccess(confirmPasswordInput, confirmPasswordError);
+                    validationState.confirmPassword = true;
+                }
+            }
+            
+            updateSubmitButton();
         });
+
+        passwordInput.addEventListener('blur', function() {
+            const password = this.value;
+            if (password === '') {
+                showError(this, passwordError, 'Password is required');
+                validationState.password = false;
+                updateSubmitButton();
+            }
+        });
+
+        // Confirm Password validation
+        confirmPasswordInput.addEventListener('input', function() {
+            const password = passwordInput.value;
+            const confirmPassword = this.value;
+            
+            if (confirmPassword === '') {
+                clearError(this, confirmPasswordError);
+                validationState.confirmPassword = false;
+            } else if (password !== confirmPassword) {
+                showError(this, confirmPasswordError, 'Passwords do not match');
+                validationState.confirmPassword = false;
+            } else {
+                showSuccess(this, confirmPasswordError);
+                validationState.confirmPassword = true;
+            }
+            updateSubmitButton();
+        });
+
+        confirmPasswordInput.addEventListener('blur', function() {
+            const confirmPassword = this.value;
+            if (confirmPassword === '') {
+                showError(this, confirmPasswordError, 'Please confirm your password');
+                validationState.confirmPassword = false;
+                updateSubmitButton();
+            }
+        });
+
+        // Terms validation
+        agreeTermsInput.addEventListener('change', function() {
+            if (this.checked) {
+                validationState.terms = true;
+                termsError.classList.add('hidden');
+            } else {
+                validationState.terms = false;
+                showError(this, termsError, 'You must agree to the terms and conditions');
+            }
+            updateSubmitButton();
+        });
+
+        // Password toggle functionality
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            
+            if (type === 'text') {
+                eyeIcon.classList.add('hidden');
+                eyeOffIcon.classList.remove('hidden');
+            } else {
+                eyeIcon.classList.remove('hidden');
+                eyeOffIcon.classList.add('hidden');
+            }
+        });
+
+        // Form submission with validation
+        signupForm.addEventListener('submit', function(e) {
+            // Clear any previous errors
+            let hasErrors = false;
+            
+            // Validate all fields
+            const firstName = firstNameInput.value.trim();
+            if (firstName === '') {
+                showError(firstNameInput, firstNameError, 'First name is required');
+                hasErrors = true;
+            } else if (!validateName(firstName)) {
+                showError(firstNameInput, firstNameError, 'Please enter a valid first name');
+                hasErrors = true;
+            }
+            
+            const lastName = lastNameInput.value.trim();
+            if (lastName === '') {
+                showError(lastNameInput, lastNameError, 'Last name is required');
+                hasErrors = true;
+            } else if (!validateName(lastName)) {
+                showError(lastNameInput, lastNameError, 'Please enter a valid last name');
+                hasErrors = true;
+            }
+            
+            const email = emailInput.value.trim();
+            if (email === '') {
+                showError(emailInput, emailError, 'Email address is required');
+                hasErrors = true;
+            } else if (!validateEmail(email)) {
+                showError(emailInput, emailError, 'Please enter a valid email address');
+                hasErrors = true;
+            }
+            
+            const password = passwordInput.value;
+            if (password === '') {
+                showError(passwordInput, passwordError, 'Password is required');
+                hasErrors = true;
+            } else if (!validatePassword(password)) {
+                showError(passwordInput, passwordError, 'Password must meet requirements');
+                hasErrors = true;
+            }
+            
+            const confirmPassword = confirmPasswordInput.value;
+            if (confirmPassword === '') {
+                showError(confirmPasswordInput, confirmPasswordError, 'Please confirm your password');
+                hasErrors = true;
+            } else if (password !== confirmPassword) {
+                showError(confirmPasswordInput, confirmPasswordError, 'Passwords do not match');
+                hasErrors = true;
+            }
+            
+            if (!agreeTermsInput.checked) {
+                showError(agreeTermsInput, termsError, 'You must agree to the terms and conditions');
+                hasErrors = true;
+            }
+            
+            // If validation fails, prevent submission
+            if (hasErrors) {
+                e.preventDefault();
+                // Focus on first invalid field
+                const inputs = [firstNameInput, lastNameInput, emailInput, passwordInput, confirmPasswordInput];
+                const firstInvalidField = inputs.find(input => 
+                    input.classList.contains('input-error')
+                );
+                if (firstInvalidField) {
+                    firstInvalidField.focus();
+                }
+                return false;
+            }
+            
+            // Show loading state and allow form to submit normally
+            showLoadingState();
+        });
+
+        function showLoadingState() {
+            signupButton.disabled = true;
+            signupButtonText.classList.add('hidden');
+            signupSpinner.classList.remove('hidden');
+        }
+
+        function handleGoogleSignup() {
+            alert('Google OAuth signup integration coming soon!');
+        }
+
+        // Initialize form state
+        updateSubmitButton();
 
         // Add smooth focus transitions
         document.querySelectorAll('input').forEach(input => {
@@ -218,24 +587,12 @@
             });
         });
 
-        // Password strength indicator (visual feedback)
-        const passwordInput = document.querySelector('input[name="password"]');
-        passwordInput.addEventListener('input', function() {
-            const password = this.value;
-            const strengthIndicator = this.parentElement.querySelector('.label-text-alt');
-            
-            if (password.length === 0) {
-                strengthIndicator.textContent = 'Must be at least 8 characters';
-                strengthIndicator.className = 'label-text-alt text-gray-500';
-            } else if (password.length < 8) {
-                strengthIndicator.textContent = 'Password too short';
-                strengthIndicator.className = 'label-text-alt text-red-500';
-            } else if (password.length >= 8 && password.length < 12) {
-                strengthIndicator.textContent = 'Good password strength';
-                strengthIndicator.className = 'label-text-alt text-yellow-500';
-            } else {
-                strengthIndicator.textContent = 'Strong password';
-                strengthIndicator.className = 'label-text-alt text-green-500';
+        // Handle form submission error (when Django returns with errors)
+        window.addEventListener('DOMContentLoaded', function() {
+            // If there are Django messages (errors), focus on first field
+            const alertElements = document.querySelectorAll('.alert-error');
+            if (alertElements.length > 0) {
+                firstNameInput.focus();
             }
         });
     </script>
