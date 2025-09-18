@@ -1,10 +1,11 @@
 from django.shortcuts import render, get_list_or_404, get_object_or_404, redirect
 from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from .models import *
 from .forms import SignUpForm
 from django.http import HttpResponse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
+from django.contrib.auth.models import User
 
 class HomeView(View):
     def get(self, request):
@@ -68,7 +69,66 @@ class ReceiptsView(View):
 
 class LoginView(View):
     def get(self, request):
+        # Redirect if user is already authenticated
+        if request.user.is_authenticated:
+            return redirect('billingapp:home')
         return render(request, "billingapp/login.html")
+    
+    def post(self, request):
+        # Get form data
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '')
+        remember_me = request.POST.get('remember_me', False)
+        
+        # Server-side validation as backup (frontend should catch these)
+        if not email:
+            messages.error(request, 'Email address is required.')
+            return render(request, "billingapp/login.html")
+        
+        if not password:
+            messages.error(request, 'Password is required.')
+            return render(request, "billingapp/login.html")
+        
+        # Attempt to authenticate user
+        try:
+            # First, try to find user by email
+            try:
+                user_obj = User.objects.get(email=email)
+                username = user_obj.username
+            except User.DoesNotExist:
+                messages.error(request, 'Invalid email or password.')
+                return render(request, "billingapp/login.html")
+            
+            # Authenticate with username and password
+            user = authenticate(request, username=username, password=password)
+            
+            if user is not None:
+                if user.is_active:
+                    # Login successful
+                    login(request, user)
+                    
+                    # Handle remember me
+                    if not remember_me:
+                        request.session.set_expiry(0)  # Session expires when browser closes
+                    else:
+                        request.session.set_expiry(1209600)  # 2 weeks
+                    
+                    # Success message and redirect
+                    messages.success(request, f'Welcome back, {user.first_name or user.username}!')
+                    return redirect(request.GET.get('next', 'billingapp:home'))
+                else:
+                    # Account is disabled
+                    messages.error(request, 'Your account has been disabled. Please contact support.')
+                    return render(request, "billingapp/login.html")
+            else:
+                # Invalid credentials
+                messages.error(request, 'Invalid email or password.')
+                return render(request, "billingapp/login.html")
+                    
+        except Exception as e:
+            # Handle unexpected errors
+            messages.error(request, 'An error occurred during login. Please try again.')
+            return render(request, "billingapp/login.html")
 
 class SignUpView(View):
     def get(self, request):

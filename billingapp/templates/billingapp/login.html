@@ -24,7 +24,19 @@
             <!-- Login Form -->
             <div class="card bg-white shadow-xl border border-gray-100">
                 <div class="card-body p-8">
-                    <form method="post" class="space-y-6">
+                    <!-- Error Messages -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-error shadow-lg mb-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>{{ message }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" id="loginForm" class="space-y-6" novalidate>
                         {% csrf_token %}
                         
                         <!-- Email Field -->
@@ -34,9 +46,13 @@
                             </label>
                             <input type="email" 
                                    name="email" 
+                                   id="email"
                                    placeholder="Enter your email"
                                    class="input input-bordered w-full focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"
                                    required>
+                            <label class="label">
+                                <span class="label-text-alt text-error hidden" id="emailError"></span>
+                            </label>
                         </div>
 
                         <!-- Password Field -->
@@ -44,13 +60,28 @@
                             <label class="label">
                                 <span class="label-text font-medium text-gray-700">Password</span>
                             </label>
-                            <input type="password" 
-                                   name="password" 
-                                   placeholder="Enter your password"
-                                   class="input input-bordered w-full focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"
-                                   required>
+                            <div class="relative">
+                                <input type="password" 
+                                       name="password" 
+                                       id="password"
+                                       placeholder="Enter your password"
+                                       class="input input-bordered w-full focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200 pr-10"
+                                       required>
+                                <button type="button" 
+                                        id="togglePassword"
+                                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                                    <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                    <svg id="eyeOffIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                                    </svg>
+                                </button>
+                            </div>
                             <label class="label">
-                                <a href="#" class="label-text-alt link link-hover text-main">Forgot password?</a>
+                                <span class="label-text-alt text-error hidden" id="passwordError"></span>
+                                <a href="{% url 'billingapp:forgot-password' %}" class="label-text-alt link link-hover text-main">Forgot password?</a>
                             </label>
                         </div>
 
@@ -64,8 +95,11 @@
 
                         <!-- Login Button -->
                         <div class="form-control">
-                            <button type="submit" class="btn bg-main hover:bg-main/90 text-white border-none w-full font-semibold text-base h-12 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl">
-                                Sign in
+                            <button type="submit" 
+                                    id="loginButton"
+                                    class="btn bg-main hover:bg-main/90 text-white border-none w-full font-semibold text-base h-12 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl">
+                                <span id="loginButtonText">Sign in</span>
+                                <span id="loginSpinner" class="loading loading-spinner loading-sm hidden"></span>
                             </button>
                         </div>
 
@@ -86,18 +120,6 @@
                                 Continue with Google
                             </button>
                         </div>
-
-                        <!-- Error Messages -->
-                        {% if messages %}
-                            {% for message in messages %}
-                                <div class="alert alert-error shadow-lg">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <span>{{ message }}</span>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
                     </form>
                 </div>
             </div>
@@ -106,7 +128,7 @@
             <div class="text-center">
                 <p class="text-sm text-gray-600">
                     Don't have an account? 
-                    <a href="" class="font-medium text-main hover:text-main/80 transition-colors duration-200">
+                    <a href="{% url 'billingapp:signup' %}" class="font-medium text-main hover:text-main/80 transition-colors duration-200">
                         Sign up for free
                     </a>
                 </p>
@@ -114,37 +136,237 @@
         </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="bg-white rounded-lg p-6 flex items-center gap-3">
-            <span class="loading loading-spinner loading-md text-main"></span>
-            <span class="text-gray-700">Signing you in...</span>
-        </div>
-    </div>
-
     <script>
-        function handleGoogleLogin() {
-            // Show loading state
-            document.getElementById('loadingOverlay').classList.remove('hidden');
-            
-            // This is where you would implement Google OAuth
-            // For now, we'll just simulate the process
-            setTimeout(() => {
-                alert('Google OAuth integration coming soon!');
-                document.getElementById('loadingOverlay').classList.add('hidden');
-            }, 1000);
-            
-            // In a real implementation, you would:
-            // 1. Initialize Google OAuth client
-            // 2. Handle the OAuth flow
-            // 3. Send the token to your Django backend
-            // 4. Redirect on success
+        // Form validation state
+        let validationState = {
+            email: false,
+            password: false
+        };
+
+        // DOM elements
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const loginButton = document.getElementById('loginButton');
+        const loginButtonText = document.getElementById('loginButtonText');
+        const loginSpinner = document.getElementById('loginSpinner');
+        const togglePassword = document.getElementById('togglePassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const eyeOffIcon = document.getElementById('eyeOffIcon');
+
+        // Validation functions
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
         }
 
-        // Form submission handling
-        document.querySelector('form').addEventListener('submit', function(e) {
-            document.getElementById('loadingOverlay').classList.remove('hidden');
+        function validatePassword(password) {
+            return password.length >= 6; // Minimum 6 characters for login
+        }
+
+        function showError(input, errorElement, message) {
+            input.classList.add('input-error', 'border-error');
+            input.classList.remove('border-success');
+            errorElement.textContent = message;
+            errorElement.classList.remove('hidden');
+        }
+
+        function showSuccess(input, errorElement) {
+            input.classList.add('border-success');
+            input.classList.remove('input-error', 'border-error');
+            errorElement.classList.add('hidden');
+        }
+
+        function clearError(input, errorElement) {
+            input.classList.remove('input-error', 'border-error', 'border-success');
+            errorElement.classList.add('hidden');
+        }
+
+        function updateSubmitButton() {
+            const allValid = Object.values(validationState).every(valid => valid);
+            loginButton.disabled = !allValid;
+            if (allValid) {
+                loginButton.classList.remove('btn-disabled');
+                loginButton.classList.add('btn-active');
+            } else {
+                loginButton.classList.add('btn-disabled');
+                loginButton.classList.remove('btn-active');
+            }
+        }
+
+        // Email validation
+        emailInput.addEventListener('input', function() {
+            const email = this.value.trim();
+            
+            if (email === '') {
+                clearError(this, emailError);
+                validationState.email = false;
+            } else if (!validateEmail(email)) {
+                showError(this, emailError, 'Please enter a valid email address');
+                validationState.email = false;
+            } else {
+                showSuccess(this, emailError);
+                validationState.email = true;
+            }
+            updateSubmitButton();
         });
+
+        emailInput.addEventListener('blur', function() {
+            const email = this.value.trim();
+            if (email === '') {
+                showError(this, emailError, 'Email address is required');
+                validationState.email = false;
+                updateSubmitButton();
+            }
+        });
+
+        // Password validation
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            
+            if (password === '') {
+                clearError(this, passwordError);
+                validationState.password = false;
+            } else if (!validatePassword(password)) {
+                showError(this, passwordError, 'Password must be at least 6 characters long');
+                validationState.password = false;
+            } else {
+                showSuccess(this, passwordError);
+                validationState.password = true;
+            }
+            updateSubmitButton();
+        });
+
+        passwordInput.addEventListener('blur', function() {
+            const password = this.value;
+            if (password === '') {
+                showError(this, passwordError, 'Password is required');
+                validationState.password = false;
+                updateSubmitButton();
+            }
+        });
+
+        // Password toggle functionality
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            
+            if (type === 'text') {
+                eyeIcon.classList.add('hidden');
+                eyeOffIcon.classList.remove('hidden');
+            } else {
+                eyeIcon.classList.remove('hidden');
+                eyeOffIcon.classList.add('hidden');
+            }
+        });
+
+        // Form submission with validation
+        loginForm.addEventListener('submit', function(e) {
+            // Clear any previous errors
+            const inputs = [emailInput, passwordInput];
+            const errors = [emailError, passwordError];
+            
+            let hasErrors = false;
+            
+            // Validate email
+            const email = emailInput.value.trim();
+            if (email === '') {
+                showError(emailInput, emailError, 'Email address is required');
+                hasErrors = true;
+            } else if (!validateEmail(email)) {
+                showError(emailInput, emailError, 'Please enter a valid email address');
+                hasErrors = true;
+            }
+            
+            // Validate password
+            const password = passwordInput.value;
+            if (password === '') {
+                showError(passwordInput, passwordError, 'Password is required');
+                hasErrors = true;
+            } else if (!validatePassword(password)) {
+                showError(passwordInput, passwordError, 'Password must be at least 6 characters long');
+                hasErrors = true;
+            }
+            
+            // If validation fails, prevent submission
+            if (hasErrors) {
+                e.preventDefault();
+                // Focus on first invalid field
+                const firstInvalidField = inputs.find(input => 
+                    input.classList.contains('input-error')
+                );
+                if (firstInvalidField) {
+                    firstInvalidField.focus();
+                }
+                return false;
+            }
+            
+            // Check rate limiting before submission
+            if (!checkRateLimit()) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Show loading state and allow form to submit normally
+            showLoadingState();
+            
+            // The form will submit normally to Django backend
+            // No need to prevent default here since validation passed
+        });
+
+        function showLoadingState() {
+            loginButton.disabled = true;
+            loginButtonText.classList.add('hidden');
+            loginSpinner.classList.remove('hidden');
+        }
+
+        function hideLoadingState() {
+            loginButton.disabled = false;
+            loginButtonText.classList.remove('hidden');
+            loginSpinner.classList.add('hidden');
+        }
+
+        function handleBackendErrors(errors) {
+            if (errors.email) {
+                showError(emailInput, emailError, errors.email[0]);
+            }
+            if (errors.password) {
+                showError(passwordInput, passwordError, errors.password[0]);
+            }
+            if (errors.non_field_errors) {
+                showNotification('error', errors.non_field_errors[0]);
+            }
+        }
+
+        function showNotification(type, message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} shadow-lg fixed top-4 right-4 w-auto max-w-md z-50`;
+            notification.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 5000);
+        }
+
+        function handleGoogleLogin() {
+            showNotification('info', 'Google OAuth integration coming soon!');
+        }
+
+        // Initialize form state
+        updateSubmitButton();
 
         // Add smooth focus transitions
         document.querySelectorAll('input').forEach(input => {
@@ -155,6 +377,46 @@
             input.addEventListener('blur', function() {
                 this.parentElement.classList.remove('focused');
             });
+        });
+
+        // Rate limiting for login attempts
+        let loginAttempts = 0;
+        const maxAttempts = 5;
+        const lockoutTime = 15 * 60 * 1000; // 15 minutes
+
+        function checkRateLimit() {
+            const lastAttempt = localStorage.getItem('lastLoginAttempt');
+            const attempts = parseInt(localStorage.getItem('loginAttempts') || '0');
+            
+            if (attempts >= maxAttempts && lastAttempt) {
+                const timeSinceLastAttempt = Date.now() - parseInt(lastAttempt);
+                if (timeSinceLastAttempt < lockoutTime) {
+                    const remainingTime = Math.ceil((lockoutTime - timeSinceLastAttempt) / 60000);
+                    showNotification('error', `Too many login attempts. Please try again in ${remainingTime} minutes.`);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function recordLoginAttempt(success) {
+            if (success) {
+                localStorage.removeItem('loginAttempts');
+                localStorage.removeItem('lastLoginAttempt');
+            } else {
+                const attempts = parseInt(localStorage.getItem('loginAttempts') || '0') + 1;
+                localStorage.setItem('loginAttempts', attempts.toString());
+                localStorage.setItem('lastLoginAttempt', Date.now().toString());
+            }
+        }
+
+        // Handle form submission error (when Django returns with errors)
+        window.addEventListener('DOMContentLoaded', function() {
+            // If there are Django messages (errors), record failed attempt
+            const alertElements = document.querySelectorAll('.alert-error');
+            if (alertElements.length > 0) {
+                recordLoginAttempt(false);
+            }
         });
     </script>
 
@@ -168,12 +430,98 @@
             box-shadow: 0 0 0 3px rgba(81, 41, 206, 0.1);
         }
         
-        .btn:hover {
+        .input-error {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+        }
+        
+        .border-error {
+            border-color: #ef4444;
+        }
+        
+        .border-success {
+            border-color: #10b981;
+        }
+        
+        .input.border-success:focus {
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        
+        .btn:hover:not(:disabled) {
             transform: translateY(-1px);
+        }
+        
+        .btn-disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .btn-active {
+            opacity: 1;
         }
         
         .card {
             backdrop-filter: blur(10px);
+        }
+        
+        .alert {
+            animation: slideInRight 0.3s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .text-error {
+            color: #ef4444;
+        }
+        
+        .loading-overlay-visible {
+            display: flex !important;
+        }
+        
+        /* Smooth transitions for all interactive elements */
+        .input, .btn, .checkbox {
+            transition: all 0.2s ease;
+        }
+        
+        /* Focus ring improvements */
+        .input:focus-visible,
+        .btn:focus-visible,
+        .checkbox:focus-visible {
+            outline: 2px solid theme(colors.main);
+            outline-offset: 2px;
+        }
+        
+        /* Disabled state improvements */
+        .btn:disabled {
+            background-color: #d1d5db;
+            color: #6b7280;
+            border-color: #d1d5db;
+        }
+        
+        /* Error message animation */
+        .label-text-alt:not(.hidden) {
+            animation: fadeInUp 0.2s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </body>
