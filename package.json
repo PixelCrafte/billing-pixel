@@ -1,0 +1,33 @@
+{
+  "name": "billing-pixel",
+  "version": "1.0.0",
+  "description": "Django-based automated billing system with PDF generation and multi-tenant support",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "tailwindcss -i ./theme/static_src/src/styles.css -o ./theme/static/css/dist/styles.css --watch",
+    "build:css-prod": "tailwindcss -i ./theme/static_src/src/styles.css -o ./theme/static/css/dist/styles.css --minify",
+    "dev": "concurrently \"npm run build:css\" \"python manage.py runserver\"",
+    "collectstatic": "python manage.py collectstatic --noinput"
+  },
+  "keywords": [
+    "django",
+    "billing",
+    "invoicing",
+    "pdf-generation",
+    "multi-tenant"
+  ],
+  "author": "Pixel Crafte",
+  "license": "MIT",
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.10",
+    "autoprefixer": "^10.4.16",
+    "concurrently": "^8.2.2",
+    "postcss": "^8.4.33",
+    "tailwindcss": "^3.4.1"
+  },
+  "dependencies": {
+    "alpinejs": "^3.13.5",
+    "htmx.org": "^1.9.10"
+  }
+}

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt {{ document.number }}</title>
+    <style>
+        /* This CSS will be injected with company branding variables */
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+                {% if versioned_data.company.logo_url %}
+                    <img src="{{ versioned_data.company.logo_url }}" alt="{{ versioned_data.company.name }}" class="company-logo">
+                {% endif %}
+                <h1 class="company-name">{{ versioned_data.company.name }}</h1>
+                <div class="company-details">
+                    {% if versioned_data.company.address_line1 %}
+                        <div>{{ versioned_data.company.address_line1 }}</div>
+                    {% endif %}
+                    {% if versioned_data.company.address_line2 %}
+                        <div>{{ versioned_data.company.address_line2 }}</div>
+                    {% endif %}
+                    {% if versioned_data.company.city or versioned_data.company.state or versioned_data.company.postal_code %}
+                        <div>
+                            {{ versioned_data.company.city }}{% if versioned_data.company.city and versioned_data.company.state %}, {% endif %}{{ versioned_data.company.state }} {{ versioned_data.company.postal_code }}
+                        </div>
+                    {% endif %}
+                    {% if versioned_data.company.country %}
+                        <div>{{ versioned_data.company.country }}</div>
+                    {% endif %}
+                    {% if company.email %}
+                        <div>{{ company.email }}</div>
+                    {% endif %}
+                    {% if company.phone %}
+                        <div>{{ company.phone }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <h1 class="document-title">RECEIPT</h1>
+                <div class="document-number">{{ versioned_data.document.number }}</div>
+                <div>
+                    <strong>Date:</strong> {{ versioned_data.document.issue_date|date:"M d, Y" }}<br>
+                    {% if document.payment_method %}
+                        <strong>Payment Method:</strong> {{ document.payment_method }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="client-info">
+        <h3>Received From:</h3>
+        <div style="font-weight: bold; font-size: 16px;">
+            {% if versioned_data.client.company %}
+                {{ versioned_data.client.company }}
+            {% endif %}
+        </div>
+        {% if versioned_data.client.name %}
+            <div>{{ versioned_data.client.name }}</div>
+        {% endif %}
+        {% if versioned_data.client.email %}
+            <div>{{ versioned_data.client.email }}</div>
+        {% endif %}
+        {% if versioned_data.client.phone %}
+            <div>{{ versioned_data.client.phone }}</div>
+        {% endif %}
+        {% if versioned_data.client.address %}
+            <div style="white-space: pre-line;">{{ versioned_data.client.address }}</div>
+        {% endif %}
+    </div>
+
+    {% if document.invoice %}
+        <div style="background-color: #f0f8ff; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <strong>Payment for Invoice:</strong> {{ document.invoice.number }}<br>
+            {% if document.reference_number %}
+                <strong>Reference Number:</strong> {{ document.reference_number }}
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <div style="text-align: center; margin: 40px 0;">
+        <div style="font-size: 18px; margin-bottom: 10px;">Amount Received:</div>
+        <div class="final-total" style="font-size: 36px; margin: 0;">
+            {{ document.currency }} {{ document.amount|floatformat:2 }}
+        </div>
+    </div>
+
+    {% if versioned_data.document.notes %}
+        <div style="margin-top: 30px;">
+            <h4>Notes:</h4>
+            <div style="white-space: pre-line;">{{ versioned_data.document.notes }}</div>
+        </div>
+    {% endif %}
+
+    <div style="margin-top: 50px; border-top: 2px solid #ddd; padding-top: 20px;">
+        <div style="display: flex; justify-content: space-between;">
+            <div>
+                <div style="font-weight: bold; margin-bottom: 20px;">Received by:</div>
+                <div style="border-bottom: 1px solid #333; width: 200px; height: 40px;"></div>
+                <div style="font-size: 12px; margin-top: 5px;">Signature</div>
+            </div>
+            <div>
+                <div style="font-weight: bold; margin-bottom: 20px;">Date:</div>
+                <div style="border-bottom: 1px solid #333; width: 150px; height: 40px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div style="text-align: center; margin-top: 40px;">
+            <em>Thank you for your payment!</em>
+        </div>
+        <div style="text-align: center; margin-top: 10px; font-size: 10px;">
+            Generated on {{ "now"|date:"M d, Y H:i" }}
+        </div>
+    </div>
+</body>
+</html>

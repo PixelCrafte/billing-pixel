@@ -13,7 +13,6 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.conf import settings
-from django.db import connection
 import json
 from datetime import datetime, timedelta
 import logging
@@ -34,27 +33,6 @@ from .utils import (
 )
 
 logger = logging.getLogger(__name__)
-
-
-# Health Check
-def health_check(request):
-    """Health check endpoint for monitoring"""
-    try:
-        # Check database connection
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT 1")
-        
-        return JsonResponse({
-            'status': 'healthy',
-            'timestamp': timezone.now().isoformat(),
-            'version': '1.0.0'
-        })
-    except Exception as e:
-        return JsonResponse({
-            'status': 'unhealthy',
-            'error': str(e),
-            'timestamp': timezone.now().isoformat()
-        }, status=500)
 
 
 # Authentication Views

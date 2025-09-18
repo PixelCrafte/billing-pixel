@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice {{ document.number }}</title>
+    <style>
+        /* This CSS will be injected with company branding variables */
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+                {% if versioned_data.company.logo_url %}
+                    <img src="{{ versioned_data.company.logo_url }}" alt="{{ versioned_data.company.name }}" class="company-logo">
+                {% endif %}
+                <h1 class="company-name">{{ versioned_data.company.name }}</h1>
+                <div class="company-details">
+                    {% if versioned_data.company.address_line1 %}
+                        <div>{{ versioned_data.company.address_line1 }}</div>
+                    {% endif %}
+                    {% if versioned_data.company.address_line2 %}
+                        <div>{{ versioned_data.company.address_line2 }}</div>
+                    {% endif %}
+                    {% if versioned_data.company.city or versioned_data.company.state or versioned_data.company.postal_code %}
+                        <div>
+                            {{ versioned_data.company.city }}{% if versioned_data.company.city and versioned_data.company.state %}, {% endif %}{{ versioned_data.company.state }} {{ versioned_data.company.postal_code }}
+                        </div>
+                    {% endif %}
+                    {% if versioned_data.company.country %}
+                        <div>{{ versioned_data.company.country }}</div>
+                    {% endif %}
+                    {% if company.email %}
+                        <div>{{ company.email }}</div>
+                    {% endif %}
+                    {% if company.phone %}
+                        <div>{{ company.phone }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <h1 class="document-title">INVOICE</h1>
+                <div class="document-number">{{ versioned_data.document.number }}</div>
+                <div>
+                    <strong>Date:</strong> {{ versioned_data.document.issue_date|date:"M d, Y" }}<br>
+                    {% if versioned_data.document.due_date %}
+                        <strong>Due:</strong> {{ versioned_data.document.due_date|date:"M d, Y" }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="client-info">
+        <h3>Bill To:</h3>
+        <div style="font-weight: bold; font-size: 16px;">
+            {% if versioned_data.client.company %}
+                {{ versioned_data.client.company }}
+            {% endif %}
+        </div>
+        {% if versioned_data.client.name %}
+            <div>{{ versioned_data.client.name }}</div>
+        {% endif %}
+        {% if versioned_data.client.email %}
+            <div>{{ versioned_data.client.email }}</div>
+        {% endif %}
+        {% if versioned_data.client.phone %}
+            <div>{{ versioned_data.client.phone }}</div>
+        {% endif %}
+        {% if versioned_data.client.address %}
+            <div style="white-space: pre-line;">{{ versioned_data.client.address }}</div>
+        {% endif %}
+    </div>
+
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th style="width: 50%;">Description</th>
+                <th style="width: 10%; text-align: center;">Qty</th>
+                <th style="width: 15%; text-align: right;">Rate</th>
+                {% if versioned_data.items|first.discount > 0 %}
+                    <th style="width: 10%; text-align: right;">Discount</th>
+                {% endif %}
+                <th style="width: 15%; text-align: right;">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in versioned_data.items %}
+                <tr>
+                    <td>{{ item.description }}</td>
+                    <td style="text-align: center;">{{ item.quantity }}</td>
+                    <td style="text-align: right;">{{ versioned_data.document.currency }} {{ item.unit_price|floatformat:2 }}</td>
+                    {% if versioned_data.items|first.discount > 0 %}
+                        <td style="text-align: right;">{{ item.discount|floatformat:1 }}%</td>
+                    {% endif %}
+                    <td style="text-align: right;">{{ versioned_data.document.currency }} {{ item.line_total|floatformat:2 }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="totals-section">
+        <div class="total-row">
+            <strong>Subtotal: {{ versioned_data.document.currency }} {{ versioned_data.totals.subtotal|floatformat:2 }}</strong>
+        </div>
+        
+        {% if versioned_data.totals.discount_total > 0 %}
+            <div class="total-row">
+                Discount ({{ versioned_data.document.discount_rate|floatformat:1 }}%): -{{ versioned_data.document.currency }} {{ versioned_data.totals.discount_total|floatformat:2 }}
+            </div>
+        {% endif %}
+        
+        {% if versioned_data.totals.tax_total > 0 %}
+            <div class="total-row">
+                Tax ({{ versioned_data.document.tax_rate|floatformat:1 }}%): {{ versioned_data.document.currency }} {{ versioned_data.totals.tax_total|floatformat:2 }}
+            </div>
+        {% endif %}
+        
+        <div class="final-total">
+            <strong>Total: {{ versioned_data.document.currency }} {{ versioned_data.totals.total|floatformat:2 }}</strong>
+        </div>
+    </div>
+
+    {% if versioned_data.document.notes %}
+        <div style="margin-top: 30px;">
+            <h4>Notes:</h4>
+            <div style="white-space: pre-line;">{{ versioned_data.document.notes }}</div>
+        </div>
+    {% endif %}
+
+    {% if company.default_terms %}
+        <div style="margin-top: 30px;">
+            <h4>Terms & Conditions:</h4>
+            <div style="white-space: pre-line; font-size: 12px;">{{ company.default_terms }}</div>
+        </div>
+    {% endif %}
+
+    <div class="footer">
+        <div style="text-align: center; margin-top: 40px;">
+            <em>Thank you for your business!</em>
+        </div>
+        <div style="text-align: center; margin-top: 10px; font-size: 10px;">
+            Generated on {{ "now"|date:"M d, Y H:i" }}
+        </div>
+    </div>
+</body>
+</html>

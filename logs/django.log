@@ -1,0 +1,728 @@
+INFO 2025-09-15 17:16:52,190 autoreload 3300 128017823883264 Watching for file changes with StatReloader
+INFO 2025-09-15 17:49:25,449 autoreload 3753 136052441092096 Watching for file changes with StatReloader
+INFO 2025-09-15 19:55:42,944 autoreload 5209 133436035665920 Watching for file changes with StatReloader
+INFO 2025-09-15 19:55:53,371 basehttp 5209 133435886134848 "GET / HTTP/1.1" 200 8400
+INFO 2025-09-15 19:55:53,611 basehttp 5209 133435877742144 "GET /static/billingapp/images/logo.svg HTTP/1.1" 200 1728
+INFO 2025-09-15 19:55:53,639 basehttp 5209 133435886134848 "GET /static/css/dist/styles.css?v=1757966153 HTTP/1.1" 200 122682
+INFO 2025-09-15 19:55:53,736 basehttp 5209 133435869349440 "GET /static/django-browser-reload/reload-listener.js HTTP/1.1" 200 623
+INFO 2025-09-15 19:55:53,803 basehttp 5209 133435869349440 "GET /static/django-browser-reload/reload-worker.js HTTP/1.1" 200 2711
+INFO 2025-09-15 19:56:03,100 basehttp 5209 133435886134848 "GET / HTTP/1.1" 200 8400
+INFO 2025-09-15 19:56:03,142 basehttp 5209 133435886134848 "GET /static/css/dist/styles.css?v=1757966163 HTTP/1.1" 200 122682
+INFO 2025-09-15 19:56:09,389 basehttp 5209 133435869349440 "GET / HTTP/1.1" 200 8400
+INFO 2025-09-15 19:56:09,425 basehttp 5209 133435869349440 "GET /static/css/dist/styles.css?v=1757966169 HTTP/1.1" 200 122682
+ERROR 2025-09-15 19:56:11,790 log 5209 133435886134848 Internal Server Error: /
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+sqlite3.OperationalError: no such column: billingapp_user.phone
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/projects/billing-pixel/billingapp/views.py", line 68, in login_view
+    if form.is_valid():
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 206, in is_valid
+    return self.is_bound and not self.errors
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 201, in errors
+    self.full_clean()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 338, in full_clean
+    self._clean_form()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 354, in _clean_form
+    cleaned_data = self.clean()
+  File "/root/projects/billing-pixel/billingapp/forms.py", line 91, in clean
+    user = authenticate(username=email, password=password)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/views/decorators/debug.py", line 75, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/__init__.py", line 114, in authenticate
+    user = backend.authenticate(request, **credentials)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/backends.py", line 65, in authenticate
+    user = UserModel._default_manager.get_by_natural_key(username)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/base_user.py", line 37, in get_by_natural_key
+    return self.get(**{self.model.USERNAME_FIELD: username})
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+django.db.utils.OperationalError: no such column: billingapp_user.phone
+ERROR 2025-09-15 19:56:11,890 basehttp 5209 133435886134848 "POST / HTTP/1.1" 500 179720
+WARNING 2025-09-15 19:56:11,317 log 5209 133435886134848 Not Found: /favicon.ico
+WARNING 2025-09-15 19:56:11,318 basehttp 5209 133435886134848 "GET /favicon.ico HTTP/1.1" 404 11590
+INFO 2025-09-15 19:58:18,604 basehttp 5209 133435877742144 "GET / HTTP/1.1" 200 8400
+INFO 2025-09-15 19:58:18,693 basehttp 5209 133435877742144 "GET /static/css/dist/styles.css?v=1757966298 HTTP/1.1" 200 122682
+INFO 2025-09-15 19:58:26,879 basehttp 5209 133435886134848 "GET /signup HTTP/1.1" 301 0
+ERROR 2025-09-15 19:58:27,026 log 5209 133435886134848 Internal Server Error: /signup/
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/urls/base.py", line 81, in reverse
+    extra, resolver = resolver.namespace_dict[ns]
+KeyError: 'billingapp'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/projects/billing-pixel/billingapp/views.py", line 99, in register_view
+    return render(request, 'billingapp/signup.html', {'form': form})
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/urls/base.py", line 92, in reverse
+    raise NoReverseMatch("%s is not a registered namespace" % key)
+django.urls.exceptions.NoReverseMatch: 'billingapp' is not a registered namespace
+ERROR 2025-09-15 19:58:27,043 basehttp 5209 133435886134848 "GET /signup/ HTTP/1.1" 500 124521
+INFO 2025-09-15 19:59:11,264 basehttp 5209 133435886134848 "GET /register HTTP/1.1" 301 0
+ERROR 2025-09-15 19:59:11,450 log 5209 133435886134848 Internal Server Error: /register/
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/urls/base.py", line 81, in reverse
+    extra, resolver = resolver.namespace_dict[ns]
+KeyError: 'billingapp'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/projects/billing-pixel/billingapp/views.py", line 99, in register_view
+    return render(request, 'billingapp/signup.html', {'form': form})
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/urls/base.py", line 92, in reverse
+    raise NoReverseMatch("%s is not a registered namespace" % key)
+django.urls.exceptions.NoReverseMatch: 'billingapp' is not a registered namespace
+ERROR 2025-09-15 19:59:11,455 basehttp 5209 133435886134848 "GET /register/ HTTP/1.1" 500 124547
+ERROR 2025-09-15 19:59:16,616 log 5209 133435877742144 Internal Server Error: /register/
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/urls/base.py", line 81, in reverse
+    extra, resolver = resolver.namespace_dict[ns]
+KeyError: 'billingapp'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/projects/billing-pixel/billingapp/views.py", line 99, in register_view
+    return render(request, 'billingapp/signup.html', {'form': form})
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/urls/base.py", line 92, in reverse
+    raise NoReverseMatch("%s is not a registered namespace" % key)
+django.urls.exceptions.NoReverseMatch: 'billingapp' is not a registered namespace
+ERROR 2025-09-15 19:59:16,657 basehttp 5209 133435877742144 "GET /register/ HTTP/1.1" 500 124547
+INFO 2025-09-15 20:00:38,507 autoreload 5209 133436035665920 /root/projects/billing-pixel/billingapp/admin.py changed, reloading.
+INFO 2025-09-15 20:00:40,207 autoreload 5363 127892669349888 Watching for file changes with StatReloader
+ERROR 2025-09-15 20:00:43,650 log 5363 127892507846208 Internal Server Error: /register/
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/urls/base.py", line 81, in reverse
+    extra, resolver = resolver.namespace_dict[ns]
+KeyError: 'billingapp'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/projects/billing-pixel/billingapp/views.py", line 99, in register_view
+    return render(request, 'billingapp/signup.html', {'form': form})
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/urls/base.py", line 92, in reverse
+    raise NoReverseMatch("%s is not a registered namespace" % key)
+django.urls.exceptions.NoReverseMatch: 'billingapp' is not a registered namespace
+ERROR 2025-09-15 20:00:43,698 basehttp 5363 127892507846208 "GET /register/ HTTP/1.1" 500 124713
+INFO 2025-09-15 20:01:57,380 autoreload 5363 127892669349888 /root/projects/billing-pixel/billingapp/urls.py changed, reloading.
+INFO 2025-09-15 20:01:58,447 autoreload 5707 124484894650368 Watching for file changes with StatReloader
+INFO 2025-09-15 20:02:00,612 basehttp 5707 124484805187136 "GET /register/ HTTP/1.1" 200 13337
+INFO 2025-09-15 20:02:00,696 basehttp 5707 124484805187136 "GET /static/css/dist/styles.css?v=1757966520 HTTP/1.1" 200 122682
+INFO 2025-09-15 20:02:43,760 autoreload 5707 124484894650368 /root/projects/billing-pixel/billingapp/urls.py changed, reloading.
+INFO 2025-09-15 20:02:44,709 autoreload 6221 124995400921088 Watching for file changes with StatReloader
+INFO 2025-09-15 20:02:48,086 basehttp 6221 124995311752768 "GET /register/ HTTP/1.1" 200 13337
+INFO 2025-09-15 20:02:48,155 basehttp 6221 124995311752768 "GET /static/css/dist/styles.css?v=1757966568 HTTP/1.1" 200 122682
+INFO 2025-09-15 20:03:39,077 basehttp 6221 124995302311488 "POST /register/ HTTP/1.1" 200 13337
+INFO 2025-09-15 20:03:39,158 basehttp 6221 124995302311488 "GET /static/css/dist/styles.css?v=1757966619 HTTP/1.1" 200 122682
+INFO 2025-09-15 20:03:55,787 basehttp 6221 124995311752768 "GET /login/ HTTP/1.1" 200 8400
+INFO 2025-09-15 20:03:55,832 basehttp 6221 124995311752768 "GET /static/css/dist/styles.css?v=1757966635 HTTP/1.1" 200 122682
+ERROR 2025-09-15 20:04:03,537 log 6221 124995302311488 Internal Server Error: /login/
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+sqlite3.OperationalError: no such column: billingapp_user.phone
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/projects/billing-pixel/billingapp/views.py", line 68, in login_view
+    if form.is_valid():
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 206, in is_valid
+    return self.is_bound and not self.errors
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 201, in errors
+    self.full_clean()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 338, in full_clean
+    self._clean_form()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 354, in _clean_form
+    cleaned_data = self.clean()
+  File "/root/projects/billing-pixel/billingapp/forms.py", line 91, in clean
+    user = authenticate(username=email, password=password)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/views/decorators/debug.py", line 75, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/__init__.py", line 114, in authenticate
+    user = backend.authenticate(request, **credentials)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/backends.py", line 65, in authenticate
+    user = UserModel._default_manager.get_by_natural_key(username)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/base_user.py", line 37, in get_by_natural_key
+    return self.get(**{self.model.USERNAME_FIELD: username})
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+django.db.utils.OperationalError: no such column: billingapp_user.phone
+ERROR 2025-09-15 20:04:03,564 basehttp 6221 124995302311488 "POST /login/ HTTP/1.1" 500 179801
+INFO 2025-09-15 20:06:28,592 autoreload 6221 124995400921088 /root/projects/billing-pixel/billingapp/models.py changed, reloading.
+INFO 2025-09-15 20:06:29,392 autoreload 6446 134026359230464 Watching for file changes with StatReloader
+ERROR 2025-09-15 20:06:31,961 log 6446 134026199299648 Internal Server Error: /login/
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+sqlite3.OperationalError: no such column: billingapp_user.phone
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/projects/billing-pixel/billingapp/views.py", line 68, in login_view
+    if form.is_valid():
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 206, in is_valid
+    return self.is_bound and not self.errors
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 201, in errors
+    self.full_clean()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 338, in full_clean
+    self._clean_form()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 354, in _clean_form
+    cleaned_data = self.clean()
+  File "/root/projects/billing-pixel/billingapp/forms.py", line 91, in clean
+    user = authenticate(username=email, password=password)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/views/decorators/debug.py", line 75, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/__init__.py", line 114, in authenticate
+    user = backend.authenticate(request, **credentials)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/backends.py", line 65, in authenticate
+    user = UserModel._default_manager.get_by_natural_key(username)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/base_user.py", line 37, in get_by_natural_key
+    return self.get(**{self.model.USERNAME_FIELD: username})
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+django.db.utils.OperationalError: no such column: billingapp_user.phone
+ERROR 2025-09-15 20:06:32,071 basehttp 6446 134026199299648 "POST /login/ HTTP/1.1" 500 179670
+INFO 2025-09-15 20:29:46,330 autoreload 6446 134026359230464 /root/projects/billing-pixel/billingapp/models.py changed, reloading.
+INFO 2025-09-15 20:29:47,837 autoreload 7313 130339727310848 Watching for file changes with StatReloader
+ERROR 2025-09-15 20:29:49,919 log 7313 130339565463104 Internal Server Error: /login/
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+sqlite3.OperationalError: no such column: billingapp_user.phone
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/projects/billing-pixel/billingapp/views.py", line 68, in login_view
+    if form.is_valid():
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 206, in is_valid
+    return self.is_bound and not self.errors
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 201, in errors
+    self.full_clean()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 338, in full_clean
+    self._clean_form()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 354, in _clean_form
+    cleaned_data = self.clean()
+  File "/root/projects/billing-pixel/billingapp/forms.py", line 91, in clean
+    user = authenticate(username=email, password=password)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/views/decorators/debug.py", line 75, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/__init__.py", line 114, in authenticate
+    user = backend.authenticate(request, **credentials)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/backends.py", line 65, in authenticate
+    user = UserModel._default_manager.get_by_natural_key(username)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/base_user.py", line 37, in get_by_natural_key
+    return self.get(**{self.model.USERNAME_FIELD: username})
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+django.db.utils.OperationalError: no such column: billingapp_user.phone
+ERROR 2025-09-15 20:29:49,960 basehttp 7313 130339565463104 "POST /login/ HTTP/1.1" 500 179670
+INFO 2025-09-15 20:29:50,031 basehttp 7313 130339565463104 "GET /static/django-browser-reload/reload-listener.js HTTP/1.1" 304 0
+INFO 2025-09-15 20:29:50,328 basehttp 7313 130339565463104 "GET /static/django-browser-reload/reload-worker.js HTTP/1.1" 304 0
+INFO 2025-09-15 20:30:00,074 autoreload 7313 130339727310848 /root/projects/billing-pixel/billingapp/models.py changed, reloading.
+INFO 2025-09-15 20:30:01,156 autoreload 7349 125274899283968 Watching for file changes with StatReloader
+ERROR 2025-09-15 20:30:03,229 log 7349 125274809685568 Internal Server Error: /login/
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+sqlite3.OperationalError: no such column: billingapp_user.phone
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/projects/billing-pixel/billingapp/views.py", line 68, in login_view
+    if form.is_valid():
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 206, in is_valid
+    return self.is_bound and not self.errors
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 201, in errors
+    self.full_clean()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 338, in full_clean
+    self._clean_form()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 354, in _clean_form
+    cleaned_data = self.clean()
+  File "/root/projects/billing-pixel/billingapp/forms.py", line 91, in clean
+    user = authenticate(username=email, password=password)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/views/decorators/debug.py", line 75, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/__init__.py", line 114, in authenticate
+    user = backend.authenticate(request, **credentials)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/backends.py", line 65, in authenticate
+    user = UserModel._default_manager.get_by_natural_key(username)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/base_user.py", line 37, in get_by_natural_key
+    return self.get(**{self.model.USERNAME_FIELD: username})
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+django.db.utils.OperationalError: no such column: billingapp_user.phone
+ERROR 2025-09-15 20:30:03,283 basehttp 7349 125274809685568 "POST /login/ HTTP/1.1" 500 179670
+INFO 2025-09-15 20:30:08,803 autoreload 7349 125274899283968 /root/projects/billing-pixel/billingapp/models.py changed, reloading.
+INFO 2025-09-15 20:30:09,689 autoreload 7386 131731785580544 Watching for file changes with StatReloader
+ERROR 2025-09-15 20:30:12,218 log 7386 131731696375360 Internal Server Error: /login/
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+sqlite3.OperationalError: no such column: billingapp_user.phone
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/projects/billing-pixel/billingapp/views.py", line 68, in login_view
+    if form.is_valid():
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 206, in is_valid
+    return self.is_bound and not self.errors
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 201, in errors
+    self.full_clean()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 338, in full_clean
+    self._clean_form()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 354, in _clean_form
+    cleaned_data = self.clean()
+  File "/root/projects/billing-pixel/billingapp/forms.py", line 91, in clean
+    user = authenticate(username=email, password=password)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/views/decorators/debug.py", line 75, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/__init__.py", line 114, in authenticate
+    user = backend.authenticate(request, **credentials)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/backends.py", line 65, in authenticate
+    user = UserModel._default_manager.get_by_natural_key(username)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/base_user.py", line 37, in get_by_natural_key
+    return self.get(**{self.model.USERNAME_FIELD: username})
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+django.db.utils.OperationalError: no such column: billingapp_user.phone
+ERROR 2025-09-15 20:30:12,248 basehttp 7386 131731696375360 "POST /login/ HTTP/1.1" 500 179670
+INFO 2025-09-15 20:30:43,794 autoreload 7386 131731785580544 /root/projects/billing-pixel/billingapp/forms.py changed, reloading.
+INFO 2025-09-15 20:30:45,071 autoreload 7695 133487895072768 Watching for file changes with StatReloader
+ERROR 2025-09-15 20:30:47,666 log 7695 133487805322816 Internal Server Error: /login/
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+sqlite3.OperationalError: no such column: billingapp_user.phone
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/projects/billing-pixel/billingapp/views.py", line 68, in login_view
+    if form.is_valid():
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 206, in is_valid
+    return self.is_bound and not self.errors
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 201, in errors
+    self.full_clean()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 338, in full_clean
+    self._clean_form()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 354, in _clean_form
+    cleaned_data = self.clean()
+  File "/root/projects/billing-pixel/billingapp/forms.py", line 91, in clean
+    user = authenticate(username=email, password=password)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/views/decorators/debug.py", line 75, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/__init__.py", line 114, in authenticate
+    user = backend.authenticate(request, **credentials)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/backends.py", line 65, in authenticate
+    user = UserModel._default_manager.get_by_natural_key(username)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/base_user.py", line 37, in get_by_natural_key
+    return self.get(**{self.model.USERNAME_FIELD: username})
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+django.db.utils.OperationalError: no such column: billingapp_user.phone
+ERROR 2025-09-15 20:30:47,721 basehttp 7695 133487805322816 "POST /login/ HTTP/1.1" 500 179670
+INFO 2025-09-15 20:34:56,223 autoreload 7695 133487895072768 /root/projects/billing-pixel/billingapp/models.py changed, reloading.
+INFO 2025-09-15 20:34:57,309 autoreload 7766 133092376608768 Watching for file changes with StatReloader
+ERROR 2025-09-15 20:34:59,533 log 7766 133092219541056 Internal Server Error: /login/
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+sqlite3.OperationalError: no such column: billingapp_user.phone
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/projects/billing-pixel/billingapp/views.py", line 68, in login_view
+    if form.is_valid():
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 206, in is_valid
+    return self.is_bound and not self.errors
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 201, in errors
+    self.full_clean()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 338, in full_clean
+    self._clean_form()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/forms/forms.py", line 354, in _clean_form
+    cleaned_data = self.clean()
+  File "/root/projects/billing-pixel/billingapp/forms.py", line 91, in clean
+    user = authenticate(username=email, password=password)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/views/decorators/debug.py", line 75, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/__init__.py", line 114, in authenticate
+    user = backend.authenticate(request, **credentials)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/backends.py", line 65, in authenticate
+    user = UserModel._default_manager.get_by_natural_key(username)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/contrib/auth/base_user.py", line 37, in get_by_natural_key
+    return self.get(**{self.model.USERNAME_FIELD: username})
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+  File "/root/projects/billing-pixel/venv/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+django.db.utils.OperationalError: no such column: billingapp_user.phone
+ERROR 2025-09-15 20:34:59,561 basehttp 7766 133092219541056 "POST /login/ HTTP/1.1" 500 179670
+INFO 2025-09-15 21:12:41,644 autoreload 7766 133092376608768 /root/projects/billing-pixel/billingapp/migrations/0001_initial.py changed, reloading.
+INFO 2025-09-15 21:12:43,310 autoreload 8107 133098481258496 Watching for file changes with StatReloader
+INFO 2025-09-15 21:23:04,283 basehttp 8107 133098323301952 "GET / HTTP/1.1" 200 8400
+INFO 2025-09-15 21:23:04,421 basehttp 8107 133098331694656 "GET /static/django-browser-reload/reload-listener.js HTTP/1.1" 304 0
+INFO 2025-09-15 21:23:04,550 basehttp 8107 133098323301952 "GET /static/css/dist/styles.css?v=1757971384 HTTP/1.1" 200 122682
+INFO 2025-09-15 21:23:04,677 basehttp 8107 133098323301952 "GET /static/django-browser-reload/reload-worker.js HTTP/1.1" 304 0
+INFO 2025-09-15 21:23:10,401 basehttp 8107 133098331694656 "GET / HTTP/1.1" 200 8400
+INFO 2025-09-15 21:23:10,452 basehttp 8107 133098331694656 "GET /static/css/dist/styles.css?v=1757971390 HTTP/1.1" 200 122682
+INFO 2025-09-15 21:23:18,973 basehttp 8107 133098323301952 "GET /login HTTP/1.1" 301 0
+INFO 2025-09-15 21:23:18,986 basehttp 8107 133098323301952 "GET /login/ HTTP/1.1" 200 8400
+INFO 2025-09-15 21:23:19,103 basehttp 8107 133098323301952 "GET /static/css/dist/styles.css?v=1757971398 HTTP/1.1" 200 122682
+INFO 2025-09-15 21:23:28,389 basehttp 8107 133098331694656 "GET /signup/ HTTP/1.1" 200 13337
+INFO 2025-09-15 21:23:28,525 basehttp 8107 133098331694656 "GET /static/css/dist/styles.css?v=1757971408 HTTP/1.1" 200 122682
+INFO 2025-09-15 21:24:08,385 basehttp 8107 133098323301952 "POST /signup/ HTTP/1.1" 200 13337
+INFO 2025-09-15 21:24:08,454 basehttp 8107 133098323301952 "GET /static/css/dist/styles.css?v=1757971448 HTTP/1.1" 200 122682
+INFO 2025-09-15 21:24:24,476 basehttp 8107 133098331694656 "GET / HTTP/1.1" 200 8400
+INFO 2025-09-15 21:24:24,534 basehttp 8107 133098331694656 "GET /static/css/dist/styles.css?v=1757971464 HTTP/1.1" 200 122682
+INFO 2025-09-15 21:24:30,301 basehttp 8107 133098323301952 "POST / HTTP/1.1" 200 8400
+INFO 2025-09-15 21:24:30,343 basehttp 8107 133098323301952 "GET /static/css/dist/styles.css?v=1757971470 HTTP/1.1" 200 122682
+INFO 2025-09-15 21:24:36,274 basehttp 8107 133098331694656 "POST / HTTP/1.1" 200 8400
+INFO 2025-09-15 21:24:36,307 basehttp 8107 133098331694656 "GET /static/css/dist/styles.css?v=1757971476 HTTP/1.1" 200 122682
+INFO 2025-09-15 21:35:54,711 autoreload 8977 130718407639040 Watching for file changes with StatReloader
+INFO 2025-09-15 21:36:37,748 basehttp 8107 133098323301952 "GET /home HTTP/1.1" 301 0
+INFO 2025-09-15 21:36:37,767 basehttp 8107 133098323301952 "GET /home/ HTTP/1.1" 302 0
+INFO 2025-09-15 21:36:37,780 basehttp 8107 133098323301952 "GET /login/?next=/home/ HTTP/1.1" 200 8400
+INFO 2025-09-15 21:36:37,951 basehttp 8107 133098323301952 "GET /static/css/dist/styles.css?v=1757972197 HTTP/1.1" 200 122682
+INFO 2025-09-15 21:36:41,599 basehttp 8107 133098331694656 "POST /login/?next=/home/ HTTP/1.1" 200 8400
+INFO 2025-09-15 21:36:41,635 basehttp 8107 133098331694656 "GET /static/css/dist/styles.css?v=1757972201 HTTP/1.1" 200 122682
+INFO 2025-09-15 21:36:46,892 basehttp 8107 133098323301952 "POST /login/?next=/home/ HTTP/1.1" 200 8400
+INFO 2025-09-15 21:36:46,924 basehttp 8107 133098323301952 "GET /static/css/dist/styles.css?v=1757972206 HTTP/1.1" 200 122682

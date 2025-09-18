@@ -102,9 +102,9 @@ class CompanySetupForm(forms.ModelForm):
         fields = [
             'name', 'email', 'phone', 'website',
             'address_line1', 'address_line2', 'city', 'state', 'postal_code', 'country',
-            'primary_color', 'accent_color', 'logo',
+            'primary_color', 'secondary_color', 'logo',
             'invoice_prefix', 'quote_prefix', 'receipt_prefix',
-            'default_currency'
+            'default_payment_terms', 'currency'
         ]
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company Name'}),
@@ -118,12 +118,13 @@ class CompanySetupForm(forms.ModelForm):
             'postal_code': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Postal Code'}),
             'country': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Country'}),
             'primary_color': forms.TextInput(attrs={'class': 'form-control', 'type': 'color'}),
-            'accent_color': forms.TextInput(attrs={'class': 'form-control', 'type': 'color'}),
+            'secondary_color': forms.TextInput(attrs={'class': 'form-control', 'type': 'color'}),
             'logo': forms.FileInput(attrs={'class': 'form-control'}),
-            'invoice_prefix': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'INV'}),
-            'quote_prefix': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'QUO'}),
-            'receipt_prefix': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'REC'}),
-            'default_currency': forms.Select(attrs={'class': 'form-control'}),
+            'invoice_prefix': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'INV-'}),
+            'quote_prefix': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'QUO-'}),
+            'receipt_prefix': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'REC-'}),
+            'default_payment_terms': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '30'}),
+            'currency': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'USD'}),
         }
     
     def clean_primary_color(self):
@@ -132,8 +133,8 @@ class CompanySetupForm(forms.ModelForm):
             raise ValidationError("Invalid color format. Use hex format like #FF0000")
         return color
     
-    def clean_accent_color(self):
-        color = self.cleaned_data.get('accent_color')
+    def clean_secondary_color(self):
+        color = self.cleaned_data.get('secondary_color')
         if color and not re.match(r'^#[0-9A-Fa-f]{6}$', color):
             raise ValidationError("Invalid color format. Use hex format like #FF0000")
         return color
@@ -144,28 +145,17 @@ class ClientForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = [
-            'name', 'company_name', 'email', 'phone',
-            'address_line1', 'address_line2', 'city',
-            'state', 'postal_code', 'country',
-            'tax_number', 'notes', 'default_currency',
-            'default_vat_rate', 'default_discount_rate'
+            'name', 'email', 'phone', 'company',
+            'address', 'tax_number', 'notes'
         ]
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Client Name'}),
-            'company_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company Name (Optional)'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'client@example.com'}),
             'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+1 (555) 123-4567'}),
-            'address_line1': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Street Address'}),
-            'address_line2': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Apt, Suite, etc.'}),
-            'city': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'}),
-            'state': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'State/Province'}),
-            'postal_code': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Postal Code'}),
-            'country': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Country'}),
+            'company': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company Name (Optional)'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Full Address'}),
             'tax_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Tax ID / VAT Number'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Internal notes about this client'}),
-            'default_currency': forms.Select(attrs={'class': 'form-control'}),
-            'default_vat_rate': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'max': '100', 'step': '0.01'}),
-            'default_discount_rate': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'max': '100', 'step': '0.01'}),
         }
     
     def __init__(self, *args, **kwargs):
@@ -213,29 +203,25 @@ class InvoiceForm(forms.ModelForm):
     class Meta:
         model = Invoice
         fields = [
-            'client_name', 'client_company', 'client_email', 'client_phone', 
-            'client_address', 'issue_date', 'due_date', 'currency',
-            'tax_rate', 'discount_rate', 'notes', 'payment_terms'
+            'client', 'issue_date', 'due_date', 'currency',
+            'tax_rate', 'discount_amount', 'notes'
         ]
-
         widgets = {
-            'client_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Client Name'}),
-            'client_company': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company Name'}),
-            'client_email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'client@example.com'}),
-            'client_phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+1 (555) 123-4567'}),
-            'client_address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Full Address'}),
+            'client': forms.Select(attrs={'class': 'form-control'}),
             'issue_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'due_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'currency': forms.Select(attrs={'class': 'form-control'}),
+            'currency': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'USD'}),
             'tax_rate': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'max': '100', 'step': '0.01'}),
-            'discount_rate': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'max': '100', 'step': '0.01'}),
+            'discount_amount': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '0.01'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Payment instructions or additional notes'}),
-            'payment_terms': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Net 30'}),
         }
     
     def __init__(self, *args, **kwargs):
         self.company = kwargs.pop('company', None)
         super().__init__(*args, **kwargs)
+        
+        if self.company:
+            self.fields['client'].queryset = Client.objects.filter(company=self.company)
         
         # Set default dates
         if not self.instance.pk:
@@ -269,28 +255,25 @@ class QuoteForm(forms.ModelForm):
     class Meta:
         model = Quote
         fields = [
-            'client_name', 'client_company', 'client_email', 'client_phone',
-            'client_address', 'issue_date', 'valid_until', 'currency',
-            'tax_rate', 'discount_rate', 'notes'
+            'client', 'issue_date', 'valid_until', 'currency',
+            'tax_rate', 'discount_amount', 'notes'
         ]
-
         widgets = {
-            'client_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Client Name'}),
-            'client_company': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company Name'}),
-            'client_email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'client@example.com'}),
-            'client_phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+1 (555) 123-4567'}),
-            'client_address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Full Address'}),
+            'client': forms.Select(attrs={'class': 'form-control'}),
             'issue_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'valid_until': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'currency': forms.Select(attrs={'class': 'form-control'}),
+            'currency': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'USD'}),
             'tax_rate': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'max': '100', 'step': '0.01'}),
-            'discount_rate': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'max': '100', 'step': '0.01'}),
+            'discount_amount': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '0.01'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Terms and conditions or additional notes'}),
         }
     
     def __init__(self, *args, **kwargs):
         self.company = kwargs.pop('company', None)
         super().__init__(*args, **kwargs)
+        
+        if self.company:
+            self.fields['client'].queryset = Client.objects.filter(company=self.company)
         
         # Set default dates
         if not self.instance.pk:
@@ -312,21 +295,15 @@ class ReceiptForm(forms.ModelForm):
     class Meta:
         model = Receipt
         fields = [
-            'client_name', 'client_company', 'client_email', 'client_phone',
-            'client_address', 'invoice', 'amount', 'currency',
+            'client', 'invoice', 'amount', 'currency',
             'payment_method', 'reference_number', 'notes'
         ]
-
         widgets = {
-            'client_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Client Name'}),
-            'client_company': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company Name'}),
-            'client_email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'client@example.com'}),
-            'client_phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+1 (555) 123-4567'}),
-            'client_address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Full Address'}),
+            'client': forms.Select(attrs={'class': 'form-control'}),
             'invoice': forms.Select(attrs={'class': 'form-control'}),
             'amount': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '0.01'}),
-            'currency': forms.Select(attrs={'class': 'form-control'}),
-            'payment_method': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Cash, Bank Transfer, Card, etc.'}),
+            'currency': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'USD'}),
+            'payment_method': forms.Select(attrs={'class': 'form-control'}),
             'reference_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Transaction ID or check number'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Payment notes'}),
         }
@@ -336,17 +313,17 @@ class ReceiptForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         
         if self.company:
-            self.fields['invoice'].queryset = Invoice.objects.filter(company=self.company)
+            self.fields['client'].queryset = Client.objects.filter(company=self.company)
+            self.fields['invoice'].queryset = Invoice.objects.filter(company=self.company, status='sent')
             self.fields['invoice'].required = False
     
     def clean(self):
         cleaned_data = super().clean()
+        client = cleaned_data.get('client')
         invoice = cleaned_data.get('invoice')
-        client_name = cleaned_data.get('client_name')
         
-        # Validate invoice matches client if both are provided
-        if invoice and client_name and invoice.client_name != client_name:
-            raise ValidationError("The selected invoice does not belong to the specified client.")
+        if invoice and invoice.client != client:
+            raise ValidationError("The selected invoice does not belong to the selected client.")
         
         return cleaned_data
 
