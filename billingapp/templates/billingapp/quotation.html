@@ -49,6 +49,7 @@
                                    id="quote_number"
                                    placeholder="QUO-2025-001"
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                            <div id="quoteNumberError" class="text-error text-sm mt-1 hidden"></div>
                         </div>
                         
                         <div class="form-control">
@@ -60,6 +61,7 @@
                                 <option value="default">PixelCrafte (Default)</option>
                                 <!-- Companies will be populated dynamically -->
                             </select>
+                            <div id="companyError" class="text-error text-sm mt-1 hidden"></div>
                         </div>
                         
                         <div class="form-control">
@@ -69,6 +71,7 @@
                             <input type="date" 
                                    id="quote_date"
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                            <div id="quoteDateError" class="text-error text-sm mt-1 hidden"></div>
                         </div>
                         
                         <div class="form-control">
@@ -78,6 +81,7 @@
                             <input type="date" 
                                    id="expiry_date"
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                            <div id="expiryDateError" class="text-error text-sm mt-1 hidden"></div>
                         </div>
                     </div>
                 </div>
@@ -101,6 +105,7 @@
                                    id="client_name"
                                    placeholder="Client Company Name"
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                            <div id="clientNameError" class="text-error text-sm mt-1 hidden"></div>
                         </div>
                         
                         <div class="form-control">
@@ -111,6 +116,7 @@
                                    id="contact_person"
                                    placeholder="Contact Person Name"
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                            <div id="contactPersonError" class="text-error text-sm mt-1 hidden"></div>
                         </div>
                         
                         <div class="form-control">
@@ -121,6 +127,7 @@
                                    id="client_email"
                                    placeholder="client@company.com"
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                            <div id="clientEmailError" class="text-error text-sm mt-1 hidden"></div>
                         </div>
                         
                         <div class="form-control">
@@ -131,6 +138,7 @@
                                    id="client_phone"
                                    placeholder="Phone Number"
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                            <div id="clientPhoneError" class="text-error text-sm mt-1 hidden"></div>
                         </div>
                         
                         <div class="form-control md:col-span-2">
@@ -141,6 +149,7 @@
                                       rows="3"
                                       placeholder="Client Address"
                                       class="textarea textarea-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"></textarea>
+                            <div id="clientAddressError" class="text-error text-sm mt-1 hidden"></div>
                         </div>
                     </div>
                 </div>
@@ -368,19 +377,123 @@
 let itemCounter = 0;
 let items = [];
 
+// Validation state
+let validationState = {
+    quoteNumber: true, // Auto-generated, so valid by default
+    company: true, // Optional field
+    quoteDate: true, // Default set
+    expiryDate: true, // Default set
+    clientName: false,
+    contactPerson: false,
+    clientEmail: false,
+    clientPhone: true, // Optional
+    clientAddress: true, // Optional
+    items: false
+};
+
+// DOM elements
+const quoteNumberInput = document.getElementById('quote_number');
+const companySelect = document.getElementById('company_select');
+const quoteDateInput = document.getElementById('quote_date');
+const expiryDateInput = document.getElementById('expiry_date');
+const clientNameInput = document.getElementById('client_name');
+const contactPersonInput = document.getElementById('contact_person');
+const clientEmailInput = document.getElementById('client_email');
+const clientPhoneInput = document.getElementById('client_phone');
+const clientAddressInput = document.getElementById('client_address');
+
+// Error elements
+const quoteNumberError = document.getElementById('quoteNumberError');
+const companyError = document.getElementById('companyError');
+const quoteDateError = document.getElementById('quoteDateError');
+const expiryDateError = document.getElementById('expiryDateError');
+const clientNameError = document.getElementById('clientNameError');
+const contactPersonError = document.getElementById('contactPersonError');
+const clientEmailError = document.getElementById('clientEmailError');
+const clientPhoneError = document.getElementById('clientPhoneError');
+const clientAddressError = document.getElementById('clientAddressError');
+
+// Validation functions
+function validateRequired(value) {
+    return value && value.trim().length > 0;
+}
+
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function validatePhone(phone) {
+    if (!phone) return true; // Optional field
+    const phoneRegex = /^[\+]?[\d\s\-\(\)]{10,}$/;
+    return phoneRegex.test(phone.replace(/\s/g, ''));
+}
+
+function validateQuoteNumber(number) {
+    return number && number.trim().length >= 5;
+}
+
+function validateName(name) {
+    return name && name.trim().length >= 2 && /^[a-zA-Z\s'-.,]+$/.test(name.trim());
+}
+
+function validateDate(dateString) {
+    if (!dateString) return false;
+    const date = new Date(dateString);
+    return date instanceof Date && !isNaN(date);
+}
+
+function validateDateRange(startDate, endDate) {
+    if (!startDate || !endDate) return true; // Let individual validations handle empty dates
+    return new Date(startDate) <= new Date(endDate);
+}
+
+function showError(input, errorElement, message) {
+    input.classList.add('input-error', 'border-error');
+    input.classList.remove('border-success');
+    errorElement.textContent = message;
+    errorElement.classList.remove('hidden');
+}
+
+function showSuccess(input, errorElement) {
+    input.classList.add('border-success');
+    input.classList.remove('input-error', 'border-error');
+    errorElement.classList.add('hidden');
+}
+
+function clearError(input, errorElement) {
+    input.classList.remove('input-error', 'border-error', 'border-success');
+    errorElement.classList.add('hidden');
+}
+
+function updateFormValidation() {
+    const allValid = Object.values(validationState).every(valid => valid);
+    
+    // Enable/disable action buttons based on validation
+    const previewButtons = document.querySelectorAll('button[onclick="previewQuotation()"]');
+    previewButtons.forEach(btn => {
+        btn.disabled = !allValid;
+        if (allValid) {
+            btn.classList.remove('btn-disabled');
+        } else {
+            btn.classList.add('btn-disabled');
+        }
+    });
+}
+
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
     // Set default date
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('quote_date').value = today;
+    quoteDateInput.value = today;
     
     // Set default expiry date (30 days from now)
     const expiry = new Date();
     expiry.setDate(expiry.getDate() + 30);
-    document.getElementById('expiry_date').value = expiry.toISOString().split('T')[0];
+    expiryDateInput.value = expiry.toISOString().split('T')[0];
     
     // Generate quote number
-    document.getElementById('quote_number').value = generateQuoteNumber();
+    quoteNumberInput.value = generateQuoteNumber();
     
     // Add event listeners for calculations
     document.getElementById('discount_percent').addEventListener('input', calculateTotals);
@@ -388,7 +501,184 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Show empty state
     updateItemsDisplay();
+    
+    // Add validation event listeners
+    setupValidationListeners();
+    
+    // Initial validation state update
+    updateFormValidation();
 });
+
+function setupValidationListeners() {
+    // Quote number validation
+    quoteNumberInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateRequired(value)) {
+            showError(this, quoteNumberError, 'Quote number is required');
+            validationState.quoteNumber = false;
+        } else if (!validateQuoteNumber(value)) {
+            showError(this, quoteNumberError, 'Quote number must be at least 5 characters long');
+            validationState.quoteNumber = false;
+        } else {
+            showSuccess(this, quoteNumberError);
+            validationState.quoteNumber = true;
+        }
+        updateFormValidation();
+    });
+
+    // Date validation
+    quoteDateInput.addEventListener('change', function() {
+        const value = this.value;
+        
+        if (!validateDate(value)) {
+            showError(this, quoteDateError, 'Please enter a valid quote date');
+            validationState.quoteDate = false;
+        } else {
+            showSuccess(this, quoteDateError);
+            validationState.quoteDate = true;
+            
+            // Revalidate expiry date to check date range
+            if (expiryDateInput.value) {
+                validateExpiryDate();
+            }
+        }
+        updateFormValidation();
+    });
+
+    expiryDateInput.addEventListener('change', function() {
+        validateExpiryDate();
+        updateFormValidation();
+    });
+
+    function validateExpiryDate() {
+        const value = expiryDateInput.value;
+        const quoteDate = quoteDateInput.value;
+        
+        if (!validateDate(value)) {
+            showError(expiryDateInput, expiryDateError, 'Please enter a valid expiry date');
+            validationState.expiryDate = false;
+        } else if (!validateDateRange(quoteDate, value)) {
+            showError(expiryDateInput, expiryDateError, 'Expiry date must be after quote date');
+            validationState.expiryDate = false;
+        } else {
+            showSuccess(expiryDateInput, expiryDateError);
+            validationState.expiryDate = true;
+        }
+    }
+
+    // Client name validation
+    clientNameInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateRequired(value)) {
+            clearError(this, clientNameError);
+            validationState.clientName = false;
+        } else if (!validateName(value)) {
+            showError(this, clientNameError, 'Please enter a valid client name');
+            validationState.clientName = false;
+        } else {
+            showSuccess(this, clientNameError);
+            validationState.clientName = true;
+        }
+        updateFormValidation();
+    });
+
+    clientNameInput.addEventListener('blur', function() {
+        const value = this.value.trim();
+        if (!validateRequired(value)) {
+            showError(this, clientNameError, 'Client name is required');
+            validationState.clientName = false;
+            updateFormValidation();
+        }
+    });
+
+    // Contact person validation
+    contactPersonInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateRequired(value)) {
+            clearError(this, contactPersonError);
+            validationState.contactPerson = false;
+        } else if (!validateName(value)) {
+            showError(this, contactPersonError, 'Please enter a valid contact person name');
+            validationState.contactPerson = false;
+        } else {
+            showSuccess(this, contactPersonError);
+            validationState.contactPerson = true;
+        }
+        updateFormValidation();
+    });
+
+    contactPersonInput.addEventListener('blur', function() {
+        const value = this.value.trim();
+        if (!validateRequired(value)) {
+            showError(this, contactPersonError, 'Contact person is required');
+            validationState.contactPerson = false;
+            updateFormValidation();
+        }
+    });
+
+    // Email validation
+    clientEmailInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateRequired(value)) {
+            clearError(this, clientEmailError);
+            validationState.clientEmail = false;
+        } else if (!validateEmail(value)) {
+            showError(this, clientEmailError, 'Please enter a valid email address');
+            validationState.clientEmail = false;
+        } else {
+            showSuccess(this, clientEmailError);
+            validationState.clientEmail = true;
+        }
+        updateFormValidation();
+    });
+
+    clientEmailInput.addEventListener('blur', function() {
+        const value = this.value.trim();
+        if (!validateRequired(value)) {
+            showError(this, clientEmailError, 'Client email is required');
+            validationState.clientEmail = false;
+            updateFormValidation();
+        }
+    });
+
+    // Phone validation (optional)
+    clientPhoneInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (value === '') {
+            clearError(this, clientPhoneError);
+            validationState.clientPhone = true; // Optional field
+        } else if (!validatePhone(value)) {
+            showError(this, clientPhoneError, 'Please enter a valid phone number');
+            validationState.clientPhone = false;
+        } else {
+            showSuccess(this, clientPhoneError);
+            validationState.clientPhone = true;
+        }
+        updateFormValidation();
+    });
+
+    // Address validation (optional)
+    clientAddressInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (value === '') {
+            clearError(this, clientAddressError);
+            validationState.clientAddress = true; // Optional field
+        } else if (value.length < 10) {
+            showError(this, clientAddressError, 'Address should be at least 10 characters long');
+            validationState.clientAddress = false;
+        } else {
+            showSuccess(this, clientAddressError);
+            validationState.clientAddress = true;
+        }
+        updateFormValidation();
+    });
+}
 
 function generateQuoteNumber() {
     const date = new Date();
@@ -409,12 +699,25 @@ function addItem() {
     items.push(item);
     updateItemsDisplay();
     calculateTotals();
+    validateItems();
 }
 
 function removeItem(id) {
     items = items.filter(item => item.id !== id);
     updateItemsDisplay();
     calculateTotals();
+    validateItems();
+}
+
+function validateItems() {
+    const hasValidItems = items.length > 0 && items.some(item => 
+        item.description.trim().length > 0 && 
+        item.quantity > 0 && 
+        item.rate >= 0
+    );
+    
+    validationState.items = hasValidItems;
+    updateFormValidation();
 }
 
 function updateItemsDisplay() {
@@ -436,14 +739,18 @@ function updateItemsDisplay() {
                        value="${item.description}"
                        placeholder="Product or service description"
                        class="input input-bordered input-sm w-full"
-                       onchange="updateItem(${item.id}, 'description', this.value)">
+                       onchange="updateItem(${item.id}, 'description', this.value)"
+                       onblur="validateItemDescription(this, ${item.id})">
+                <div id="itemDesc${item.id}Error" class="text-error text-xs mt-1 hidden"></div>
             </td>
             <td>
                 <input type="number" 
                        value="${item.quantity}"
                        min="1"
                        class="input input-bordered input-sm w-full text-center"
-                       onchange="updateItem(${item.id}, 'quantity', parseFloat(this.value) || 1)">
+                       onchange="updateItem(${item.id}, 'quantity', parseFloat(this.value) || 1)"
+                       onblur="validateItemQuantity(this, ${item.id})">
+                <div id="itemQty${item.id}Error" class="text-error text-xs mt-1 hidden"></div>
             </td>
             <td>
                 <input type="number" 
@@ -451,7 +758,9 @@ function updateItemsDisplay() {
                        min="0"
                        step="0.01"
                        class="input input-bordered input-sm w-full text-right"
-                       onchange="updateItem(${item.id}, 'rate', parseFloat(this.value) || 0)">
+                       onchange="updateItem(${item.id}, 'rate', parseFloat(this.value) || 0)"
+                       onblur="validateItemRate(this, ${item.id})">
+                <div id="itemRate${item.id}Error" class="text-error text-xs mt-1 hidden"></div>
             </td>
             <td class="text-right font-medium">$${item.amount.toFixed(2)}</td>
             <td class="text-center">
@@ -463,6 +772,48 @@ function updateItemsDisplay() {
             </td>
         </tr>
     `).join('');
+    
+    validateItems();
+}
+
+function validateItemDescription(input, itemId) {
+    const errorElement = document.getElementById(`itemDesc${itemId}Error`);
+    const value = input.value.trim();
+    
+    if (!value) {
+        showError(input, errorElement, 'Description required');
+    } else if (value.length < 3) {
+        showError(input, errorElement, 'Description too short');
+    } else {
+        showSuccess(input, errorElement);
+    }
+    validateItems();
+}
+
+function validateItemQuantity(input, itemId) {
+    const errorElement = document.getElementById(`itemQty${itemId}Error`);
+    const value = parseFloat(input.value);
+    
+    if (!value || value < 1) {
+        showError(input, errorElement, 'Quantity must be at least 1');
+        input.value = 1;
+    } else {
+        showSuccess(input, errorElement);
+    }
+    validateItems();
+}
+
+function validateItemRate(input, itemId) {
+    const errorElement = document.getElementById(`itemRate${itemId}Error`);
+    const value = parseFloat(input.value);
+    
+    if (isNaN(value) || value < 0) {
+        showError(input, errorElement, 'Rate must be 0 or greater');
+        input.value = 0;
+    } else {
+        showSuccess(input, errorElement);
+    }
+    validateItems();
 }
 
 function updateItem(id, field, value) {
@@ -493,21 +844,88 @@ function calculateTotals() {
     document.getElementById('total-display').textContent = `$${total.toFixed(2)}`;
 }
 
+function validateForm() {
+    let hasErrors = false;
+    
+    // Validate all required fields
+    if (!validateRequired(quoteNumberInput.value)) {
+        showError(quoteNumberInput, quoteNumberError, 'Quote number is required');
+        hasErrors = true;
+    }
+    
+    if (!validateDate(quoteDateInput.value)) {
+        showError(quoteDateInput, quoteDateError, 'Please enter a valid quote date');
+        hasErrors = true;
+    }
+    
+    if (!validateDate(expiryDateInput.value)) {
+        showError(expiryDateInput, expiryDateError, 'Please enter a valid expiry date');
+        hasErrors = true;
+    }
+    
+    if (!validateRequired(clientNameInput.value)) {
+        showError(clientNameInput, clientNameError, 'Client name is required');
+        hasErrors = true;
+    }
+    
+    if (!validateRequired(contactPersonInput.value)) {
+        showError(contactPersonInput, contactPersonError, 'Contact person is required');
+        hasErrors = true;
+    }
+    
+    if (!validateRequired(clientEmailInput.value)) {
+        showError(clientEmailInput, clientEmailError, 'Client email is required');
+        hasErrors = true;
+    } else if (!validateEmail(clientEmailInput.value)) {
+        showError(clientEmailInput, clientEmailError, 'Please enter a valid email address');
+        hasErrors = true;
+    }
+    
+    if (items.length === 0) {
+        alert('Please add at least one item to the quotation');
+        hasErrors = true;
+    }
+    
+    return !hasErrors;
+}
+
 function previewQuotation() {
+    if (!validateForm()) {
+        alert('Please fix all validation errors before previewing the quotation');
+        return;
+    }
+    
     const preview = generatePreviewHTML();
     document.getElementById('quotation-preview').innerHTML = preview;
     document.getElementById('previewModal').showModal();
 }
 
+function saveQuotation() {
+    if (!validateForm()) {
+        alert('Please fix all validation errors before saving the quotation');
+        return;
+    }
+    
+    // Implementation for saving quotation
+    alert('Quotation saved as draft!');
+}
+
+function sendQuotation() {
+    // Implementation for sending quotation
+    alert('Quotation sent to client!');
+    document.getElementById('previewModal').close();
+}
+
+// Rest of the functions remain the same...
 function generatePreviewHTML() {
-    const quoteNumber = document.getElementById('quote_number').value;
-    const quoteDate = document.getElementById('quote_date').value;
-    const expiryDate = document.getElementById('expiry_date').value;
-    const clientName = document.getElementById('client_name').value;
-    const contactPerson = document.getElementById('contact_person').value;
-    const clientEmail = document.getElementById('client_email').value;
-    const clientPhone = document.getElementById('client_phone').value;
-    const clientAddress = document.getElementById('client_address').value;
+    const quoteNumber = quoteNumberInput.value;
+    const quoteDate = quoteDateInput.value;
+    const expiryDate = expiryDateInput.value;
+    const clientName = clientNameInput.value;
+    const contactPerson = contactPersonInput.value;
+    const clientEmail = clientEmailInput.value;
+    const clientPhone = clientPhoneInput.value;
+    const clientAddress = clientAddressInput.value;
     const terms = document.getElementById('terms_conditions').value;
     const notes = document.getElementById('additional_notes').value;
     
@@ -624,7 +1042,7 @@ function printQuotation() {
         <!DOCTYPE html>
         <html>
         <head>
-            <title>Quotation - ${document.getElementById('quote_number').value}</title>
+            <title>Quotation - ${quoteNumberInput.value}</title>
             <style>
                 body { font-family: Arial, sans-serif; margin: 20px; }
                 table { width: 100%; border-collapse: collapse; }
@@ -655,36 +1073,50 @@ function printQuotation() {
     printWindow.print();
 }
 
-function saveQuotation() {
-    // Implementation for saving quotation
-    alert('Quotation saved as draft!');
-}
-
-function sendQuotation() {
-    // Implementation for sending quotation
-    alert('Quotation sent to client!');
-    document.getElementById('previewModal').close();
-}
-
 function clearQuotation() {
     if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
         // Clear all form fields
-        document.getElementById('quote_number').value = generateQuoteNumber();
-        document.getElementById('client_name').value = '';
-        document.getElementById('contact_person').value = '';
-        document.getElementById('client_email').value = '';
-        document.getElementById('client_phone').value = '';
-        document.getElementById('client_address').value = '';
+        quoteNumberInput.value = generateQuoteNumber();
+        companySelect.value = '';
+        clientNameInput.value = '';
+        contactPersonInput.value = '';
+        clientEmailInput.value = '';
+        clientPhoneInput.value = '';
+        clientAddressInput.value = '';
         document.getElementById('terms_conditions').value = '';
         document.getElementById('additional_notes').value = '';
         document.getElementById('discount_percent').value = '';
         document.getElementById('tax_percent').value = '';
+        
+        // Clear all error states
+        const errorElements = document.querySelectorAll('[id$="Error"]');
+        errorElements.forEach(el => el.classList.add('hidden'));
+        
+        const inputs = document.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            input.classList.remove('input-error', 'border-error', 'border-success');
+        });
+        
+        // Reset validation state
+        validationState = {
+            quoteNumber: true,
+            company: true,
+            quoteDate: true,
+            expiryDate: true,
+            clientName: false,
+            contactPerson: false,
+            clientEmail: false,
+            clientPhone: true,
+            clientAddress: true,
+            items: false
+        };
         
         // Clear items
         items = [];
         itemCounter = 0;
         updateItemsDisplay();
         calculateTotals();
+        updateFormValidation();
     }
 }
 </script>
