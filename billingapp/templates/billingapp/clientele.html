@@ -527,6 +527,7 @@
                                 <option value="company">Company</option>
                                 <option value="organization">Organization</option>
                             </select>
+                            <div id="clientTypeError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
 
                         <div class="form-control mb-4">
@@ -535,6 +536,7 @@
                             </label>
                             <input type="text" id="companyName" name="company_name" placeholder="Enter company or individual name" 
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20" required>
+                            <div id="companyNameError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
 
                         <div class="form-control mb-4">
@@ -561,6 +563,7 @@
                             </label>
                             <input type="url" id="website" name="website" placeholder="https://example.com" 
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                            <div id="websiteError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
                     </div>
                 </div>
@@ -581,6 +584,7 @@
                             </label>
                             <input type="text" id="contactPerson" name="contact_person" placeholder="Full name" 
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                            <div id="contactPersonError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
 
                         <div class="form-control mb-4">
@@ -589,6 +593,7 @@
                             </label>
                             <input type="text" id="position" name="position" placeholder="Job title or position" 
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                            <div id="positionError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
 
                         <div class="form-control mb-4">
@@ -597,6 +602,7 @@
                             </label>
                             <input type="email" id="email" name="email" placeholder="contact@company.com" 
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20" required>
+                            <div id="emailError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
 
                         <div class="form-control">
@@ -605,6 +611,7 @@
                             </label>
                             <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567" 
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                            <div id="phoneError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
                     </div>
                 </div>
@@ -626,6 +633,7 @@
                             </label>
                             <input type="text" id="streetAddress" name="street_address" placeholder="123 Main Street" 
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                            <div id="streetAddressError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4 mb-4">
@@ -635,6 +643,7 @@
                                 </label>
                                 <input type="text" id="city" name="city" placeholder="City" 
                                        class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                                <div id="cityError" class="text-error text-xs mt-1 hidden"></div>
                             </div>
                             <div class="form-control">
                                 <label class="label">
@@ -642,6 +651,7 @@
                                 </label>
                                 <input type="text" id="state" name="state" placeholder="State" 
                                        class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                                <div id="stateError" class="text-error text-xs mt-1 hidden"></div>
                             </div>
                         </div>
 
@@ -652,6 +662,7 @@
                                 </label>
                                 <input type="text" id="zipCode" name="zip_code" placeholder="12345" 
                                        class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                                <div id="zipCodeError" class="text-error text-xs mt-1 hidden"></div>
                             </div>
                             <div class="form-control">
                                 <label class="label">
@@ -659,6 +670,7 @@
                                 </label>
                                 <input type="text" id="country" name="country" placeholder="Country" 
                                        class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                                <div id="countryError" class="text-error text-xs mt-1 hidden"></div>
                             </div>
                         </div>
                     </div>
@@ -680,6 +692,7 @@
                             </label>
                             <input type="text" id="taxId" name="tax_id" placeholder="Tax identification number" 
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                            <div id="taxIdError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
 
                         <div class="form-control mb-4">
@@ -725,6 +738,404 @@ let filteredData = [];
 let currentSort = { field: '', direction: 'asc' };
 let editingClientId = null;
 
+<script>
+// Search and Filter functionality
+let clientsData = []; // This would be populated with actual data from Django
+let filteredData = [];
+let currentSort = { field: '', direction: 'asc' };
+let editingClientId = null;
+
+// Validation state
+let validationState = {
+    clientType: false,
+    companyName: false,
+    email: false,
+    contactPerson: true, // Optional
+    position: true, // Optional
+    phone: true, // Optional
+    website: true, // Optional
+    streetAddress: true, // Optional
+    city: true, // Optional
+    state: true, // Optional
+    zipCode: true, // Optional
+    country: true, // Optional
+    taxId: true // Optional
+};
+
+// DOM elements
+const clientTypeSelect = document.getElementById('clientType');
+const companyNameInput = document.getElementById('companyName');
+const emailInput = document.getElementById('email');
+const contactPersonInput = document.getElementById('contactPerson');
+const positionInput = document.getElementById('position');
+const phoneInput = document.getElementById('phone');
+const websiteInput = document.getElementById('website');
+const streetAddressInput = document.getElementById('streetAddress');
+const cityInput = document.getElementById('city');
+const stateInput = document.getElementById('state');
+const zipCodeInput = document.getElementById('zipCode');
+const countryInput = document.getElementById('country');
+const taxIdInput = document.getElementById('taxId');
+
+// Error elements
+const clientTypeError = document.getElementById('clientTypeError');
+const companyNameError = document.getElementById('companyNameError');
+const emailError = document.getElementById('emailError');
+const contactPersonError = document.getElementById('contactPersonError');
+const positionError = document.getElementById('positionError');
+const phoneError = document.getElementById('phoneError');
+const websiteError = document.getElementById('websiteError');
+const streetAddressError = document.getElementById('streetAddressError');
+const cityError = document.getElementById('cityError');
+const stateError = document.getElementById('stateError');
+const zipCodeError = document.getElementById('zipCodeError');
+const countryError = document.getElementById('countryError');
+const taxIdError = document.getElementById('taxIdError');
+
+// Validation functions
+function validateRequired(value) {
+    return value && value.trim().length > 0;
+}
+
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function validatePhone(phone) {
+    if (!phone) return true; // Optional field
+    const phoneRegex = /^[\+]?[\d\s\-\(\)]{10,}$/;
+    return phoneRegex.test(phone.replace(/\s/g, ''));
+}
+
+function validateCompanyName(name) {
+    return name && name.trim().length >= 2 && name.trim().length <= 100;
+}
+
+function validateContactPerson(name) {
+    if (!name) return true; // Optional field
+    return name.trim().length >= 2 && /^[a-zA-Z\s'-.,]+$/.test(name.trim());
+}
+
+function validatePosition(position) {
+    if (!position) return true; // Optional field
+    return position.trim().length >= 2 && position.trim().length <= 50;
+}
+
+function validateWebsite(url) {
+    if (!url) return true; // Optional field
+    const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+    return urlRegex.test(url);
+}
+
+function validateAddress(address) {
+    if (!address) return true; // Optional field
+    return address.trim().length >= 5 && address.trim().length <= 200;
+}
+
+function validateCity(city) {
+    if (!city) return true; // Optional field
+    return city.trim().length >= 2 && /^[a-zA-Z\s'-]+$/.test(city.trim());
+}
+
+function validateState(state) {
+    if (!state) return true; // Optional field
+    return state.trim().length >= 2 && /^[a-zA-Z\s'-]+$/.test(state.trim());
+}
+
+function validateZipCode(zip) {
+    if (!zip) return true; // Optional field
+    const zipRegex = /^[\d\w\s\-]{3,10}$/;
+    return zipRegex.test(zip.trim());
+}
+
+function validateCountry(country) {
+    if (!country) return true; // Optional field
+    return country.trim().length >= 2 && /^[a-zA-Z\s'-]+$/.test(country.trim());
+}
+
+function validateTaxId(taxId) {
+    if (!taxId) return true; // Optional field
+    return taxId.trim().length >= 5 && taxId.trim().length <= 30;
+}
+
+function showError(input, errorElement, message) {
+    input.classList.add('input-error', 'border-error');
+    input.classList.remove('border-success');
+    errorElement.textContent = message;
+    errorElement.classList.remove('hidden');
+}
+
+function showSuccess(input, errorElement) {
+    input.classList.add('border-success');
+    input.classList.remove('input-error', 'border-error');
+    errorElement.classList.add('hidden');
+}
+
+function clearError(input, errorElement) {
+    input.classList.remove('input-error', 'border-error', 'border-success');
+    errorElement.classList.add('hidden');
+}
+
+function updateFormValidation() {
+    const allValid = Object.values(validationState).every(valid => valid);
+    
+    // Enable/disable save button based on validation
+    const saveButton = document.querySelector('button[type="submit"]');
+    if (saveButton) {
+        saveButton.disabled = !allValid;
+        if (allValid) {
+            saveButton.classList.remove('btn-disabled');
+        } else {
+            saveButton.classList.add('btn-disabled');
+        }
+    }
+}
+
+function setupValidationListeners() {
+    // Client type validation
+    clientTypeSelect.addEventListener('change', function() {
+        const value = this.value;
+        
+        if (!validateRequired(value)) {
+            showError(this, clientTypeError, 'Please select a client type');
+            validationState.clientType = false;
+        } else {
+            showSuccess(this, clientTypeError);
+            validationState.clientType = true;
+        }
+        updateFormValidation();
+    });
+
+    // Company name validation
+    companyNameInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateRequired(value)) {
+            clearError(this, companyNameError);
+            validationState.companyName = false;
+        } else if (!validateCompanyName(value)) {
+            showError(this, companyNameError, 'Company name must be 2-100 characters long');
+            validationState.companyName = false;
+        } else {
+            showSuccess(this, companyNameError);
+            validationState.companyName = true;
+        }
+        updateFormValidation();
+    });
+
+    companyNameInput.addEventListener('blur', function() {
+        const value = this.value.trim();
+        if (!validateRequired(value)) {
+            showError(this, companyNameError, 'Company/Name is required');
+            validationState.companyName = false;
+            updateFormValidation();
+        }
+    });
+
+    // Email validation
+    emailInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateRequired(value)) {
+            clearError(this, emailError);
+            validationState.email = false;
+        } else if (!validateEmail(value)) {
+            showError(this, emailError, 'Please enter a valid email address');
+            validationState.email = false;
+        } else {
+            showSuccess(this, emailError);
+            validationState.email = true;
+        }
+        updateFormValidation();
+    });
+
+    emailInput.addEventListener('blur', function() {
+        const value = this.value.trim();
+        if (!validateRequired(value)) {
+            showError(this, emailError, 'Email address is required');
+            validationState.email = false;
+            updateFormValidation();
+        }
+    });
+
+    // Contact person validation (optional)
+    contactPersonInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateContactPerson(value)) {
+            showError(this, contactPersonError, 'Please enter a valid contact person name');
+            validationState.contactPerson = false;
+        } else {
+            if (value === '') {
+                clearError(this, contactPersonError);
+            } else {
+                showSuccess(this, contactPersonError);
+            }
+            validationState.contactPerson = true;
+        }
+        updateFormValidation();
+    });
+
+    // Position validation (optional)
+    positionInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validatePosition(value)) {
+            showError(this, positionError, 'Position must be 2-50 characters if provided');
+            validationState.position = false;
+        } else {
+            if (value === '') {
+                clearError(this, positionError);
+            } else {
+                showSuccess(this, positionError);
+            }
+            validationState.position = true;
+        }
+        updateFormValidation();
+    });
+
+    // Phone validation (optional)
+    phoneInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validatePhone(value)) {
+            showError(this, phoneError, 'Please enter a valid phone number');
+            validationState.phone = false;
+        } else {
+            if (value === '') {
+                clearError(this, phoneError);
+            } else {
+                showSuccess(this, phoneError);
+            }
+            validationState.phone = true;
+        }
+        updateFormValidation();
+    });
+
+    // Website validation (optional)
+    websiteInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateWebsite(value)) {
+            showError(this, websiteError, 'Please enter a valid website URL');
+            validationState.website = false;
+        } else {
+            if (value === '') {
+                clearError(this, websiteError);
+            } else {
+                showSuccess(this, websiteError);
+            }
+            validationState.website = true;
+        }
+        updateFormValidation();
+    });
+
+    // Address fields validation (optional)
+    streetAddressInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateAddress(value)) {
+            showError(this, streetAddressError, 'Address must be 5-200 characters if provided');
+            validationState.streetAddress = false;
+        } else {
+            if (value === '') {
+                clearError(this, streetAddressError);
+            } else {
+                showSuccess(this, streetAddressError);
+            }
+            validationState.streetAddress = true;
+        }
+        updateFormValidation();
+    });
+
+    cityInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateCity(value)) {
+            showError(this, cityError, 'Please enter a valid city name');
+            validationState.city = false;
+        } else {
+            if (value === '') {
+                clearError(this, cityError);
+            } else {
+                showSuccess(this, cityError);
+            }
+            validationState.city = true;
+        }
+        updateFormValidation();
+    });
+
+    stateInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateState(value)) {
+            showError(this, stateError, 'Please enter a valid state/province');
+            validationState.state = false;
+        } else {
+            if (value === '') {
+                clearError(this, stateError);
+            } else {
+                showSuccess(this, stateError);
+            }
+            validationState.state = true;
+        }
+        updateFormValidation();
+    });
+
+    zipCodeInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateZipCode(value)) {
+            showError(this, zipCodeError, 'Please enter a valid ZIP/postal code');
+            validationState.zipCode = false;
+        } else {
+            if (value === '') {
+                clearError(this, zipCodeError);
+            } else {
+                showSuccess(this, zipCodeError);
+            }
+            validationState.zipCode = true;
+        }
+        updateFormValidation();
+    });
+
+    countryInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateCountry(value)) {
+            showError(this, countryError, 'Please enter a valid country name');
+            validationState.country = false;
+        } else {
+            if (value === '') {
+                clearError(this, countryError);
+            } else {
+                showSuccess(this, countryError);
+            }
+            validationState.country = true;
+        }
+        updateFormValidation();
+    });
+
+    // Tax ID validation (optional)
+    taxIdInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateTaxId(value)) {
+            showError(this, taxIdError, 'Tax ID must be 5-30 characters if provided');
+            validationState.taxId = false;
+        } else {
+            if (value === '') {
+                clearError(this, taxIdError);
+            } else {
+                showSuccess(this, taxIdError);
+            }
+            validationState.taxId = true;
+        }
+        updateFormValidation();
+    });
+}
+
 // Initialize search functionality
 document.addEventListener('DOMContentLoaded', function() {
     // Add search input event listener
@@ -736,6 +1147,9 @@ document.addEventListener('DOMContentLoaded', function() {
             performSearch();
         }
     });
+
+    // Setup validation listeners
+    setupValidationListeners();
 });
 
 function performSearch() {
@@ -798,6 +1212,34 @@ function openAddClientModal() {
     document.getElementById('modalTitle').textContent = 'Add New Client';
     document.getElementById('saveButtonText').textContent = 'Save Client';
     document.getElementById('clientForm').reset();
+    
+    // Clear all error states
+    const errorElements = document.querySelectorAll('[id$="Error"]');
+    errorElements.forEach(el => el.classList.add('hidden'));
+    
+    const inputs = document.querySelectorAll('#clientForm input, #clientForm select, #clientForm textarea');
+    inputs.forEach(input => {
+        input.classList.remove('input-error', 'border-error', 'border-success');
+    });
+    
+    // Reset validation state
+    validationState = {
+        clientType: false,
+        companyName: false,
+        email: false,
+        contactPerson: true,
+        position: true,
+        phone: true,
+        website: true,
+        streetAddress: true,
+        city: true,
+        state: true,
+        zipCode: true,
+        country: true,
+        taxId: true
+    };
+    
+    updateFormValidation();
     document.getElementById('clientModal').classList.add('modal-open');
 }
 
@@ -812,15 +1254,29 @@ function editClient(id) {
     
     // Example of populating form with existing data
     if (id === 1) {
-        document.getElementById('clientType').value = 'company';
-        document.getElementById('companyName').value = 'Acme Corporation';
+        clientTypeSelect.value = 'company';
+        companyNameInput.value = 'Acme Corporation';
         document.getElementById('industry').value = 'technology';
-        document.getElementById('contactPerson').value = 'John Smith';
-        document.getElementById('position').value = 'CEO';
-        document.getElementById('email').value = 'john@acme.com';
-        document.getElementById('phone').value = '+1 (555) 123-4567';
+        contactPersonInput.value = 'John Smith';
+        positionInput.value = 'CEO';
+        emailInput.value = 'john@acme.com';
+        phoneInput.value = '+1 (555) 123-4567';
+        
+        // Set validation state for populated fields
+        validationState.clientType = true;
+        validationState.companyName = true;
+        validationState.email = true;
+        
+        // Show success states for filled fields
+        showSuccess(clientTypeSelect, clientTypeError);
+        showSuccess(companyNameInput, companyNameError);
+        showSuccess(emailInput, emailError);
+        showSuccess(contactPersonInput, contactPersonError);
+        showSuccess(positionInput, positionError);
+        showSuccess(phoneInput, phoneError);
     }
     
+    updateFormValidation();
     document.getElementById('clientModal').classList.add('modal-open');
 }
 
@@ -830,8 +1286,41 @@ function closeClientModal() {
     editingClientId = null;
 }
 
+function validateForm() {
+    let hasErrors = false;
+    
+    // Validate all required fields
+    if (!validateRequired(clientTypeSelect.value)) {
+        showError(clientTypeSelect, clientTypeError, 'Please select a client type');
+        hasErrors = true;
+    }
+    
+    if (!validateRequired(companyNameInput.value)) {
+        showError(companyNameInput, companyNameError, 'Company/Name is required');
+        hasErrors = true;
+    } else if (!validateCompanyName(companyNameInput.value)) {
+        showError(companyNameInput, companyNameError, 'Company name must be 2-100 characters long');
+        hasErrors = true;
+    }
+    
+    if (!validateRequired(emailInput.value)) {
+        showError(emailInput, emailError, 'Email address is required');
+        hasErrors = true;
+    } else if (!validateEmail(emailInput.value)) {
+        showError(emailInput, emailError, 'Please enter a valid email address');
+        hasErrors = true;
+    }
+    
+    return !hasErrors;
+}
+
 function saveClient(event) {
     event.preventDefault();
+    
+    if (!validateForm()) {
+        alert('Please fix all validation errors before saving the client');
+        return;
+    }
     
     const formData = new FormData(event.target);
     const clientData = Object.fromEntries(formData.entries());
@@ -893,6 +1382,7 @@ function exportClients() {
     console.log('Exporting clients');
     alert('Export started...');
 }
+</script>
 </script>
 
 <style>
