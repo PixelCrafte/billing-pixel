@@ -55,10 +55,12 @@
                             <span class="label-text font-medium text-gray-700">First Name</span>
                         </label>
                         <input type="text" 
+                               id="firstName"
                                name="first_name" 
                                value="{{ user.first_name }}"
                                class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"
                                readonly>
+                        <div id="firstNameError" class="text-error text-sm mt-1 hidden"></div>
                     </div>
 
                     <!-- Last Name -->
@@ -67,10 +69,12 @@
                             <span class="label-text font-medium text-gray-700">Last Name</span>
                         </label>
                         <input type="text" 
+                               id="lastName"
                                name="last_name" 
                                value="{{ user.last_name }}"
                                class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"
                                readonly>
+                        <div id="lastNameError" class="text-error text-sm mt-1 hidden"></div>
                     </div>
 
                     <!-- Email -->
@@ -79,10 +83,12 @@
                             <span class="label-text font-medium text-gray-700">Email Address</span>
                         </label>
                         <input type="email" 
+                               id="email"
                                name="email" 
                                value="{{ user.email }}"
                                class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"
                                readonly>
+                        <div id="emailError" class="text-error text-sm mt-1 hidden"></div>
                     </div>
 
                     <!-- Phone -->
@@ -91,11 +97,13 @@
                             <span class="label-text font-medium text-gray-700">Phone Number</span>
                         </label>
                         <input type="tel" 
+                               id="phone"
                                name="phone" 
                                value="{{ user.profile.phone|default:'' }}"
                                placeholder="Enter your phone number"
                                class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"
                                readonly>
+                        <div id="phoneError" class="text-error text-sm mt-1 hidden"></div>
                     </div>
 
                     <!-- Address -->
@@ -104,20 +112,25 @@
                             <span class="label-text font-medium text-gray-700">Address</span>
                         </label>
                         <textarea name="address" 
+                                  id="address"
                                   rows="3"
                                   placeholder="Enter your address"
                                   class="textarea textarea-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"
                                   readonly>{{ user.profile.address|default:'' }}</textarea>
+                        <div id="addressError" class="text-error text-sm mt-1 hidden"></div>
                     </div>
 
                     <!-- Save Button (Hidden by default) -->
                     <div class="md:col-span-2 hidden" id="saveButtonContainer">
                         <div class="flex gap-3">
-                            <button type="submit" class="btn bg-main text-white hover:bg-main/90">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                                Save Changes
+                            <button type="submit" id="saveProfileButton" class="btn bg-main text-white hover:bg-main/90" disabled>
+                                <span id="saveButtonText">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    Save Changes
+                                </span>
+                                <span id="saveSpinner" class="loading loading-spinner loading-sm hidden"></span>
                             </button>
                             <button type="button" class="btn btn-outline" onclick="cancelEdit()">Cancel</button>
                         </div>
@@ -261,7 +274,7 @@
             </button>
         </div>
         
-        <form method="post" action="" enctype="multipart/form-data">
+        <form id="createCompanyForm" method="post" action="" enctype="multipart/form-data">
             {% csrf_token %}
             
             <!-- Basic Company Information -->
@@ -278,14 +291,15 @@
                             <label class="label">
                                 <span class="label-text font-medium">Company Name *</span>
                             </label>
-                            <input type="text" name="name" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20" required>
+                            <input type="text" id="companyName" name="name" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20" required>
+                            <div id="companyNameError" class="text-error text-sm mt-1 hidden"></div>
                         </div>
                         
                         <div class="form-control">
                             <label class="label">
                                 <span class="label-text font-medium">Industry</span>
                             </label>
-                            <select name="industry" class="select select-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                            <select id="companyIndustry" name="industry" class="select select-bordered focus:border-main focus:ring-2 focus:ring-main/20">
                                 <option value="">Select Industry</option>
                                 <option value="Technology">Technology</option>
                                 <option value="Consulting">Consulting</option>
@@ -304,7 +318,8 @@
                             <label class="label">
                                 <span class="label-text font-medium">Company Logo</span>
                             </label>
-                            <input type="file" name="logo" accept="image/*" class="file-input file-input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                            <input type="file" id="companyLogo" name="logo" accept="image/*" class="file-input file-input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                            <div id="companyLogoError" class="text-error text-sm mt-1 hidden"></div>
                         </div>
                     </div>
                 </div>
@@ -324,36 +339,41 @@
                             <label class="label">
                                 <span class="label-text font-medium">Business Email *</span>
                             </label>
-                            <input type="email" name="email" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20" required>
+                            <input type="email" id="companyEmail" name="email" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20" required>
+                            <div id="companyEmailError" class="text-error text-sm mt-1 hidden"></div>
                         </div>
                         
                         <div class="form-control">
                             <label class="label">
                                 <span class="label-text font-medium">Business Phone *</span>
                             </label>
-                            <input type="tel" name="phone" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20" required>
+                            <input type="tel" id="companyPhone" name="phone" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20" required>
+                            <div id="companyPhoneError" class="text-error text-sm mt-1 hidden"></div>
                         </div>
 
                         <div class="form-control">
                             <label class="label">
                                 <span class="label-text font-medium">Fax Number</span>
                             </label>
-                            <input type="tel" name="fax" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                            <input type="tel" id="companyFax" name="fax" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20">
+                            <div id="companyFaxError" class="text-error text-sm mt-1 hidden"></div>
                         </div>
                         
                         <div class="form-control">
                             <label class="label">
                                 <span class="label-text font-medium">Website</span>
                             </label>
-                            <input type="url" name="website" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20" placeholder="https://">
+                            <input type="url" id="companyWebsite" name="website" class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20" placeholder="https://">
+                            <div id="companyWebsiteError" class="text-error text-sm mt-1 hidden"></div>
                         </div>
                         
                         <div class="form-control md:col-span-2">
                             <label class="label">
                                 <span class="label-text font-medium">Business Address *</span>
                             </label>
-                            <textarea name="address" class="textarea textarea-bordered focus:border-main focus:ring-2 focus:ring-main/20" rows="3" required 
+                            <textarea id="companyAddress" name="address" class="textarea textarea-bordered focus:border-main focus:ring-2 focus:ring-main/20" rows="3" required 
                                       placeholder="Street address, City, State/Province, Postal Code, Country"></textarea>
+                            <div id="companyAddressError" class="text-error text-sm mt-1 hidden"></div>
                         </div>
                     </div>
                 </div>
@@ -540,11 +560,14 @@
             
             <div class="modal-action">
                 <button type="button" class="btn btn-outline" onclick="document.getElementById('createCompanyModal').close()">Cancel</button>
-                <button type="submit" class="btn bg-main text-white hover:bg-main/90">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    Create Company
+                <button type="submit" id="createCompanyButton" class="btn bg-main text-white hover:bg-main/90" disabled>
+                    <span id="createButtonText">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Create Company
+                    </span>
+                    <span id="createSpinner" class="loading loading-spinner loading-sm hidden"></span>
                 </button>
             </div>
         </form>
@@ -555,6 +578,551 @@
 </dialog>
 
 <script>
+    // Profile form validation state
+    let profileValidationState = {
+        firstName: true, // Initially true since form is readonly
+        lastName: true,
+        email: true,
+        phone: true,
+        address: true
+    };
+
+    // Company form validation state  
+    let companyValidationState = {
+        name: false,
+        email: false,
+        phone: false,
+        address: false,
+        website: true, // Optional field
+        fax: true // Optional field
+    };
+
+    // DOM elements - Profile form
+    const personalInfoForm = document.getElementById('personalInfoForm');
+    const firstNameInput = document.getElementById('firstName');
+    const lastNameInput = document.getElementById('lastName');
+    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phone');
+    const addressInput = document.getElementById('address');
+    const saveProfileButton = document.getElementById('saveProfileButton');
+    const saveButtonText = document.getElementById('saveButtonText');
+    const saveSpinner = document.getElementById('saveSpinner');
+
+    // Error elements - Profile form
+    const firstNameError = document.getElementById('firstNameError');
+    const lastNameError = document.getElementById('lastNameError');
+    const emailError = document.getElementById('emailError');
+    const phoneError = document.getElementById('phoneError');
+    const addressError = document.getElementById('addressError');
+
+    // DOM elements - Company form
+    const createCompanyForm = document.getElementById('createCompanyForm');
+    const companyNameInput = document.getElementById('companyName');
+    const companyEmailInput = document.getElementById('companyEmail');
+    const companyPhoneInput = document.getElementById('companyPhone');
+    const companyFaxInput = document.getElementById('companyFax');
+    const companyWebsiteInput = document.getElementById('companyWebsite');
+    const companyAddressInput = document.getElementById('companyAddress');
+    const companyLogoInput = document.getElementById('companyLogo');
+    const createCompanyButton = document.getElementById('createCompanyButton');
+    const createButtonText = document.getElementById('createButtonText');
+    const createSpinner = document.getElementById('createSpinner');
+
+    // Error elements - Company form
+    const companyNameError = document.getElementById('companyNameError');
+    const companyEmailError = document.getElementById('companyEmailError');
+    const companyPhoneError = document.getElementById('companyPhoneError');
+    const companyFaxError = document.getElementById('companyFaxError');
+    const companyWebsiteError = document.getElementById('companyWebsiteError');
+    const companyAddressError = document.getElementById('companyAddressError');
+    const companyLogoError = document.getElementById('companyLogoError');
+
+    // Validation functions
+    function validateName(name) {
+        return name.trim().length >= 2 && /^[a-zA-Z\s'-]+$/.test(name.trim());
+    }
+
+    function validateEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    function validatePhone(phone) {
+        // Allow various phone formats
+        const phoneRegex = /^[\+]?[\d\s\-\(\)]{10,}$/;
+        return phoneRegex.test(phone.replace(/\s/g, ''));
+    }
+
+    function validateWebsite(url) {
+        if (!url) return true; // Optional field
+        try {
+            const urlObj = new URL(url);
+            return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+        } catch {
+            return false;
+        }
+    }
+
+    function validateCompanyName(name) {
+        return name.trim().length >= 2 && name.trim().length <= 100;
+    }
+
+    function validateAddress(address) {
+        return address.trim().length >= 10;
+    }
+
+    function validateFileSize(file) {
+        // Max 5MB
+        return file && file.size <= 5 * 1024 * 1024;
+    }
+
+    function validateFileType(file) {
+        if (!file) return true;
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        return allowedTypes.includes(file.type);
+    }
+
+    function showError(input, errorElement, message) {
+        input.classList.add('input-error', 'border-error');
+        input.classList.remove('border-success');
+        errorElement.textContent = message;
+        errorElement.classList.remove('hidden');
+    }
+
+    function showSuccess(input, errorElement) {
+        input.classList.add('border-success');
+        input.classList.remove('input-error', 'border-error');
+        errorElement.classList.add('hidden');
+    }
+
+    function clearError(input, errorElement) {
+        input.classList.remove('input-error', 'border-error', 'border-success');
+        errorElement.classList.add('hidden');
+    }
+
+    function updateProfileSubmitButton() {
+        const allValid = Object.values(profileValidationState).every(valid => valid);
+        saveProfileButton.disabled = !allValid;
+        if (allValid) {
+            saveProfileButton.classList.remove('btn-disabled');
+        } else {
+            saveProfileButton.classList.add('btn-disabled');
+        }
+    }
+
+    function updateCompanySubmitButton() {
+        const allValid = Object.values(companyValidationState).every(valid => valid);
+        createCompanyButton.disabled = !allValid;
+        if (allValid) {
+            createCompanyButton.classList.remove('btn-disabled');
+        } else {
+            createCompanyButton.classList.add('btn-disabled');
+        }
+    }
+
+    // Profile form validation
+    firstNameInput.addEventListener('input', function() {
+        const firstName = this.value.trim();
+        
+        if (firstName === '') {
+            clearError(this, firstNameError);
+            profileValidationState.firstName = false;
+        } else if (!validateName(firstName)) {
+            showError(this, firstNameError, 'Please enter a valid first name (letters only, minimum 2 characters)');
+            profileValidationState.firstName = false;
+        } else {
+            showSuccess(this, firstNameError);
+            profileValidationState.firstName = true;
+        }
+        updateProfileSubmitButton();
+    });
+
+    firstNameInput.addEventListener('blur', function() {
+        const firstName = this.value.trim();
+        if (firstName === '') {
+            showError(this, firstNameError, 'First name is required');
+            profileValidationState.firstName = false;
+            updateProfileSubmitButton();
+        }
+    });
+
+    lastNameInput.addEventListener('input', function() {
+        const lastName = this.value.trim();
+        
+        if (lastName === '') {
+            clearError(this, lastNameError);
+            profileValidationState.lastName = false;
+        } else if (!validateName(lastName)) {
+            showError(this, lastNameError, 'Please enter a valid last name (letters only, minimum 2 characters)');
+            profileValidationState.lastName = false;
+        } else {
+            showSuccess(this, lastNameError);
+            profileValidationState.lastName = true;
+        }
+        updateProfileSubmitButton();
+    });
+
+    lastNameInput.addEventListener('blur', function() {
+        const lastName = this.value.trim();
+        if (lastName === '') {
+            showError(this, lastNameError, 'Last name is required');
+            profileValidationState.lastName = false;
+            updateProfileSubmitButton();
+        }
+    });
+
+    emailInput.addEventListener('input', function() {
+        const email = this.value.trim();
+        
+        if (email === '') {
+            clearError(this, emailError);
+            profileValidationState.email = false;
+        } else if (!validateEmail(email)) {
+            showError(this, emailError, 'Please enter a valid email address');
+            profileValidationState.email = false;
+        } else {
+            showSuccess(this, emailError);
+            profileValidationState.email = true;
+        }
+        updateProfileSubmitButton();
+    });
+
+    emailInput.addEventListener('blur', function() {
+        const email = this.value.trim();
+        if (email === '') {
+            showError(this, emailError, 'Email address is required');
+            profileValidationState.email = false;
+            updateProfileSubmitButton();
+        }
+    });
+
+    phoneInput.addEventListener('input', function() {
+        const phone = this.value.trim();
+        
+        if (phone === '') {
+            clearError(this, phoneError);
+            profileValidationState.phone = true; // Optional field
+        } else if (!validatePhone(phone)) {
+            showError(this, phoneError, 'Please enter a valid phone number');
+            profileValidationState.phone = false;
+        } else {
+            showSuccess(this, phoneError);
+            profileValidationState.phone = true;
+        }
+        updateProfileSubmitButton();
+    });
+
+    addressInput.addEventListener('input', function() {
+        const address = this.value.trim();
+        
+        if (address === '') {
+            clearError(this, addressError);
+            profileValidationState.address = true; // Optional field
+        } else if (address.length < 10) {
+            showError(this, addressError, 'Address should be at least 10 characters long');
+            profileValidationState.address = false;
+        } else {
+            showSuccess(this, addressError);
+            profileValidationState.address = true;
+        }
+        updateProfileSubmitButton();
+    });
+
+    // Company form validation
+    companyNameInput.addEventListener('input', function() {
+        const name = this.value.trim();
+        
+        if (name === '') {
+            clearError(this, companyNameError);
+            companyValidationState.name = false;
+        } else if (!validateCompanyName(name)) {
+            showError(this, companyNameError, 'Company name must be 2-100 characters long');
+            companyValidationState.name = false;
+        } else {
+            showSuccess(this, companyNameError);
+            companyValidationState.name = true;
+        }
+        updateCompanySubmitButton();
+    });
+
+    companyNameInput.addEventListener('blur', function() {
+        const name = this.value.trim();
+        if (name === '') {
+            showError(this, companyNameError, 'Company name is required');
+            companyValidationState.name = false;
+            updateCompanySubmitButton();
+        }
+    });
+
+    companyEmailInput.addEventListener('input', function() {
+        const email = this.value.trim();
+        
+        if (email === '') {
+            clearError(this, companyEmailError);
+            companyValidationState.email = false;
+        } else if (!validateEmail(email)) {
+            showError(this, companyEmailError, 'Please enter a valid email address');
+            companyValidationState.email = false;
+        } else {
+            showSuccess(this, companyEmailError);
+            companyValidationState.email = true;
+        }
+        updateCompanySubmitButton();
+    });
+
+    companyEmailInput.addEventListener('blur', function() {
+        const email = this.value.trim();
+        if (email === '') {
+            showError(this, companyEmailError, 'Business email is required');
+            companyValidationState.email = false;
+            updateCompanySubmitButton();
+        }
+    });
+
+    companyPhoneInput.addEventListener('input', function() {
+        const phone = this.value.trim();
+        
+        if (phone === '') {
+            clearError(this, companyPhoneError);
+            companyValidationState.phone = false;
+        } else if (!validatePhone(phone)) {
+            showError(this, companyPhoneError, 'Please enter a valid phone number');
+            companyValidationState.phone = false;
+        } else {
+            showSuccess(this, companyPhoneError);
+            companyValidationState.phone = true;
+        }
+        updateCompanySubmitButton();
+    });
+
+    companyPhoneInput.addEventListener('blur', function() {
+        const phone = this.value.trim();
+        if (phone === '') {
+            showError(this, companyPhoneError, 'Business phone is required');
+            companyValidationState.phone = false;
+            updateCompanySubmitButton();
+        }
+    });
+
+    companyFaxInput.addEventListener('input', function() {
+        const fax = this.value.trim();
+        
+        if (fax === '') {
+            clearError(this, companyFaxError);
+            companyValidationState.fax = true; // Optional
+        } else if (!validatePhone(fax)) {
+            showError(this, companyFaxError, 'Please enter a valid fax number');
+            companyValidationState.fax = false;
+        } else {
+            showSuccess(this, companyFaxError);
+            companyValidationState.fax = true;
+        }
+        updateCompanySubmitButton();
+    });
+
+    companyWebsiteInput.addEventListener('input', function() {
+        const website = this.value.trim();
+        
+        if (website === '') {
+            clearError(this, companyWebsiteError);
+            companyValidationState.website = true; // Optional
+        } else if (!validateWebsite(website)) {
+            showError(this, companyWebsiteError, 'Please enter a valid website URL (must start with http:// or https://)');
+            companyValidationState.website = false;
+        } else {
+            showSuccess(this, companyWebsiteError);
+            companyValidationState.website = true;
+        }
+        updateCompanySubmitButton();
+    });
+
+    companyAddressInput.addEventListener('input', function() {
+        const address = this.value.trim();
+        
+        if (address === '') {
+            clearError(this, companyAddressError);
+            companyValidationState.address = false;
+        } else if (!validateAddress(address)) {
+            showError(this, companyAddressError, 'Business address must be at least 10 characters long');
+            companyValidationState.address = false;
+        } else {
+            showSuccess(this, companyAddressError);
+            companyValidationState.address = true;
+        }
+        updateCompanySubmitButton();
+    });
+
+    companyAddressInput.addEventListener('blur', function() {
+        const address = this.value.trim();
+        if (address === '') {
+            showError(this, companyAddressError, 'Business address is required');
+            companyValidationState.address = false;
+            updateCompanySubmitButton();
+        }
+    });
+
+    companyLogoInput.addEventListener('change', function() {
+        const file = this.files[0];
+        
+        if (!file) {
+            clearError(this, companyLogoError);
+            return;
+        }
+
+        if (!validateFileType(file)) {
+            showError(this, companyLogoError, 'Please select a valid image file (JPEG, PNG, GIF, WebP)');
+            this.value = '';
+            return;
+        }
+
+        if (!validateFileSize(file)) {
+            showError(this, companyLogoError, 'File size must be less than 5MB');
+            this.value = '';
+            return;
+        }
+
+        clearError(this, companyLogoError);
+    });
+
+    // Form submission handlers
+    personalInfoForm.addEventListener('submit', function(e) {
+        let hasErrors = false;
+        
+        // Validate all fields if not readonly
+        const firstName = firstNameInput.value.trim();
+        if (!firstNameInput.hasAttribute('readonly') && firstName === '') {
+            showError(firstNameInput, firstNameError, 'First name is required');
+            hasErrors = true;
+        } else if (!firstNameInput.hasAttribute('readonly') && !validateName(firstName)) {
+            showError(firstNameInput, firstNameError, 'Please enter a valid first name');
+            hasErrors = true;
+        }
+        
+        const lastName = lastNameInput.value.trim();
+        if (!lastNameInput.hasAttribute('readonly') && lastName === '') {
+            showError(lastNameInput, lastNameError, 'Last name is required');
+            hasErrors = true;
+        } else if (!lastNameInput.hasAttribute('readonly') && !validateName(lastName)) {
+            showError(lastNameInput, lastNameError, 'Please enter a valid last name');
+            hasErrors = true;
+        }
+
+        const email = emailInput.value.trim();
+        if (!emailInput.hasAttribute('readonly') && email === '') {
+            showError(emailInput, emailError, 'Email address is required');
+            hasErrors = true;
+        } else if (!emailInput.hasAttribute('readonly') && !validateEmail(email)) {
+            showError(emailInput, emailError, 'Please enter a valid email address');
+            hasErrors = true;
+        }
+
+        const phone = phoneInput.value.trim();
+        if (!phoneInput.hasAttribute('readonly') && phone !== '' && !validatePhone(phone)) {
+            showError(phoneInput, phoneError, 'Please enter a valid phone number');
+            hasErrors = true;
+        }
+
+        const address = addressInput.value.trim();
+        if (!addressInput.hasAttribute('readonly') && address !== '' && address.length < 10) {
+            showError(addressInput, addressError, 'Address should be at least 10 characters long');
+            hasErrors = true;
+        }
+
+        if (hasErrors) {
+            e.preventDefault();
+            return false;
+        }
+
+        // Show loading state
+        saveProfileButton.disabled = true;
+        saveButtonText.classList.add('hidden');
+        saveSpinner.classList.remove('hidden');
+    });
+
+    createCompanyForm.addEventListener('submit', function(e) {
+        let hasErrors = false;
+        
+        // Validate required fields
+        const name = companyNameInput.value.trim();
+        if (name === '') {
+            showError(companyNameInput, companyNameError, 'Company name is required');
+            hasErrors = true;
+        } else if (!validateCompanyName(name)) {
+            showError(companyNameInput, companyNameError, 'Company name must be 2-100 characters long');
+            hasErrors = true;
+        }
+
+        const email = companyEmailInput.value.trim();
+        if (email === '') {
+            showError(companyEmailInput, companyEmailError, 'Business email is required');
+            hasErrors = true;
+        } else if (!validateEmail(email)) {
+            showError(companyEmailInput, companyEmailError, 'Please enter a valid email address');
+            hasErrors = true;
+        }
+
+        const phone = companyPhoneInput.value.trim();
+        if (phone === '') {
+            showError(companyPhoneInput, companyPhoneError, 'Business phone is required');
+            hasErrors = true;
+        } else if (!validatePhone(phone)) {
+            showError(companyPhoneInput, companyPhoneError, 'Please enter a valid phone number');
+            hasErrors = true;
+        }
+
+        const address = companyAddressInput.value.trim();
+        if (address === '') {
+            showError(companyAddressInput, companyAddressError, 'Business address is required');
+            hasErrors = true;
+        } else if (!validateAddress(address)) {
+            showError(companyAddressInput, companyAddressError, 'Business address must be at least 10 characters long');
+            hasErrors = true;
+        }
+
+        // Validate optional fields
+        const website = companyWebsiteInput.value.trim();
+        if (website !== '' && !validateWebsite(website)) {
+            showError(companyWebsiteInput, companyWebsiteError, 'Please enter a valid website URL');
+            hasErrors = true;
+        }
+
+        const fax = companyFaxInput.value.trim();
+        if (fax !== '' && !validatePhone(fax)) {
+            showError(companyFaxInput, companyFaxError, 'Please enter a valid fax number');
+            hasErrors = true;
+        }
+
+        // Validate file
+        const file = companyLogoInput.files[0];
+        if (file) {
+            if (!validateFileType(file)) {
+                showError(companyLogoInput, companyLogoError, 'Please select a valid image file');
+                hasErrors = true;
+            } else if (!validateFileSize(file)) {
+                showError(companyLogoInput, companyLogoError, 'File size must be less than 5MB');
+                hasErrors = true;
+            }
+        }
+
+        if (hasErrors) {
+            e.preventDefault();
+            // Focus on first invalid field
+            const inputs = [companyNameInput, companyEmailInput, companyPhoneInput, companyAddressInput];
+            const firstInvalidField = inputs.find(input => 
+                input.classList.contains('input-error')
+            );
+            if (firstInvalidField) {
+                firstInvalidField.focus();
+            }
+            return false;
+        }
+
+        // Show loading state
+        createCompanyButton.disabled = true;
+        createButtonText.classList.add('hidden');
+        createSpinner.classList.remove('hidden');
+    });
+
     function editPersonalInfo() {
         // Make form fields editable
         const form = document.getElementById('personalInfoForm');
@@ -562,13 +1130,20 @@
         const saveContainer = document.getElementById('saveButtonContainer');
         
         inputs.forEach(input => {
-            if (input.name !== 'email') { // Keep email readonly for security
-                input.removeAttribute('readonly');
-                input.classList.add('bg-white');
-            }
+            input.removeAttribute('readonly');
+            input.classList.add('bg-white');
         });
         
         saveContainer.classList.remove('hidden');
+        
+        // Reset validation state for editable fields
+        profileValidationState.firstName = firstNameInput.value.trim() !== '';
+        profileValidationState.lastName = lastNameInput.value.trim() !== '';
+        profileValidationState.email = emailInput.value.trim() !== '';
+        profileValidationState.phone = true; // Optional
+        profileValidationState.address = true; // Optional
+        
+        updateProfileSubmitButton();
     }
     
     function cancelEdit() {
@@ -578,24 +1153,57 @@
         const saveContainer = document.getElementById('saveButtonContainer');
         
         inputs.forEach(input => {
-            if (input.name !== 'email') {
-                input.setAttribute('readonly', 'readonly');
-                input.classList.remove('bg-white');
-            }
+            input.setAttribute('readonly', 'readonly');
+            input.classList.remove('bg-white');
+            clearError(input, document.getElementById(input.id + 'Error'));
         });
         
         saveContainer.classList.add('hidden');
         form.reset();
+        
+        // Reset validation states
+        profileValidationState = {
+            firstName: true,
+            lastName: true,
+            email: true,
+            phone: true,
+            address: true
+        };
     }
     
     function createCompany() {
         document.getElementById('createCompanyModal').showModal();
+        // Reset company form validation
+        companyValidationState = {
+            name: false,
+            email: false,
+            phone: false,
+            address: false,
+            website: true,
+            fax: true
+        };
+        updateCompanySubmitButton();
     }
     
     function editCompany(companyId) {
         // Redirect to company edit page
         window.location.href = `/companies/${companyId}/edit/`;
     }
+
+    // Add smooth focus transitions
+    document.querySelectorAll('input, textarea, select').forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+        
+        input.addEventListener('blur', function() {
+            this.parentElement.classList.remove('focused');
+        });
+    });
+
+    // Initialize button states
+    updateProfileSubmitButton();
+    updateCompanySubmitButton();
 </script>
 
 <style>
