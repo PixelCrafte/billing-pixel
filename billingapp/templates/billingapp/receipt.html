@@ -49,6 +49,7 @@
                                    id="receipt_number"
                                    placeholder="REC-2025-001"
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                            <div id="receiptNumberError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
                         
                         <div class="form-control">
@@ -69,6 +70,7 @@
                             <input type="date" 
                                    id="payment_date"
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                            <div id="paymentDateError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
                         
                         <div class="form-control">
@@ -91,6 +93,7 @@
                                    id="related_invoice"
                                    placeholder="INV-2025-001 (Optional)"
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                            <div id="relatedInvoiceError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
 
                         <div class="form-control">
@@ -101,6 +104,7 @@
                                    id="transaction_id"
                                    placeholder="TXN-123456789"
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                            <div id="transactionIdError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
                     </div>
                 </div>
@@ -124,6 +128,7 @@
                                    id="payer_name"
                                    placeholder="Client/Customer Name"
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                            <div id="payerNameError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
                         
                         <div class="form-control">
@@ -134,6 +139,7 @@
                                    id="payer_email"
                                    placeholder="payer@company.com"
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                            <div id="payerEmailError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
                         
                         <div class="form-control">
@@ -144,6 +150,7 @@
                                    id="payer_phone"
                                    placeholder="Phone Number"
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                            <div id="payerPhoneError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
                         
                         <div class="form-control">
@@ -154,6 +161,7 @@
                                    id="payer_company"
                                    placeholder="Payer Company (Optional)"
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                            <div id="payerCompanyError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
                         
                         <div class="form-control md:col-span-2">
@@ -164,6 +172,7 @@
                                       rows="3"
                                       placeholder="Payer Address"
                                       class="textarea textarea-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200"></textarea>
+                            <div id="payerAddressError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
                     </div>
                 </div>
@@ -193,6 +202,7 @@
                                 <option value="check">Check</option>
                                 <option value="other">Other</option>
                             </select>
+                            <div id="paymentMethodError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
                         
                         <div class="form-control">
@@ -215,6 +225,7 @@
                                    id="payment_details"
                                    placeholder="e.g., **** **** **** 1234, Reference Number, etc."
                                    class="input input-bordered focus:border-main focus:ring-2 focus:ring-main/20 transition-all duration-200">
+                            <div id="paymentDetailsError" class="text-error text-xs mt-1 hidden"></div>
                         </div>
                     </div>
                 </div>
@@ -444,14 +455,136 @@
 let itemCounter = 0;
 let items = [];
 
+// Validation state
+let validationState = {
+    receiptNumber: true, // Auto-generated, so valid by default
+    paymentDate: true, // Default set
+    payerName: false,
+    payerEmail: false,
+    payerPhone: true, // Optional
+    payerCompany: true, // Optional
+    payerAddress: true, // Optional
+    paymentMethod: false,
+    paymentDetails: true, // Optional
+    transactionId: true, // Optional
+    relatedInvoice: true, // Optional
+    items: false
+};
+
+// DOM elements
+const receiptNumberInput = document.getElementById('receipt_number');
+const paymentDateInput = document.getElementById('payment_date');
+const payerNameInput = document.getElementById('payer_name');
+const payerEmailInput = document.getElementById('payer_email');
+const payerPhoneInput = document.getElementById('payer_phone');
+const payerCompanyInput = document.getElementById('payer_company');
+const payerAddressInput = document.getElementById('payer_address');
+const paymentMethodSelect = document.getElementById('payment_method');
+const paymentDetailsInput = document.getElementById('payment_details');
+const transactionIdInput = document.getElementById('transaction_id');
+const relatedInvoiceInput = document.getElementById('related_invoice');
+
+// Error elements
+const receiptNumberError = document.getElementById('receiptNumberError');
+const paymentDateError = document.getElementById('paymentDateError');
+const payerNameError = document.getElementById('payerNameError');
+const payerEmailError = document.getElementById('payerEmailError');
+const payerPhoneError = document.getElementById('payerPhoneError');
+const payerCompanyError = document.getElementById('payerCompanyError');
+const payerAddressError = document.getElementById('payerAddressError');
+const paymentMethodError = document.getElementById('paymentMethodError');
+const paymentDetailsError = document.getElementById('paymentDetailsError');
+const transactionIdError = document.getElementById('transactionIdError');
+const relatedInvoiceError = document.getElementById('relatedInvoiceError');
+
+// Validation functions
+function validateRequired(value) {
+    return value && value.trim().length > 0;
+}
+
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function validatePhone(phone) {
+    if (!phone) return true; // Optional field
+    const phoneRegex = /^[\+]?[\d\s\-\(\)]{10,}$/;
+    return phoneRegex.test(phone.replace(/\s/g, ''));
+}
+
+function validateReceiptNumber(number) {
+    return number && number.trim().length >= 5;
+}
+
+function validateName(name) {
+    return name && name.trim().length >= 2 && /^[a-zA-Z\s'-.,]+$/.test(name.trim());
+}
+
+function validateDate(dateString) {
+    if (!dateString) return false;
+    const date = new Date(dateString);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date instanceof Date && !isNaN(date) && date <= today;
+}
+
+function validateTransactionId(txnId) {
+    if (!txnId || txnId.trim() === '') return true; // Optional field
+    return txnId.trim().length >= 5 && txnId.trim().length <= 50;
+}
+
+function validateInvoiceNumber(invoice) {
+    if (!invoice || invoice.trim() === '') return true; // Optional field
+    return /^[A-Z]{2,4}-\d{4}-\d{2,4}-\d{3}$/.test(invoice.trim()) || invoice.trim().length >= 5;
+}
+
+function validateCompanyName(company) {
+    if (!company || company.trim() === '') return true; // Optional field
+    return company.trim().length >= 2 && company.trim().length <= 100;
+}
+
+function showError(input, errorElement, message) {
+    input.classList.add('input-error', 'border-error');
+    input.classList.remove('border-success');
+    errorElement.textContent = message;
+    errorElement.classList.remove('hidden');
+}
+
+function showSuccess(input, errorElement) {
+    input.classList.add('border-success');
+    input.classList.remove('input-error', 'border-error');
+    errorElement.classList.add('hidden');
+}
+
+function clearError(input, errorElement) {
+    input.classList.remove('input-error', 'border-error', 'border-success');
+    errorElement.classList.add('hidden');
+}
+
+function updateFormValidation() {
+    const allValid = Object.values(validationState).every(valid => valid);
+    
+    // Enable/disable action buttons based on validation
+    const previewButtons = document.querySelectorAll('button[onclick="previewReceipt()"]');
+    previewButtons.forEach(btn => {
+        btn.disabled = !allValid;
+        if (allValid) {
+            btn.classList.remove('btn-disabled');
+        } else {
+            btn.classList.add('btn-disabled');
+        }
+    });
+}
+
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
     // Set default date
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('payment_date').value = today;
+    paymentDateInput.value = today;
     
     // Generate receipt number
-    document.getElementById('receipt_number').value = generateReceiptNumber();
+    receiptNumberInput.value = generateReceiptNumber();
     
     // Add event listeners for calculations
     document.getElementById('discount_percent').addEventListener('input', calculateTotals);
@@ -461,7 +594,217 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show empty state
     updateItemsDisplay();
     updateStatusBadge();
+    
+    // Add validation event listeners
+    setupValidationListeners();
+    
+    // Initial validation state update
+    updateFormValidation();
 });
+
+function setupValidationListeners() {
+    // Receipt number validation
+    receiptNumberInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateRequired(value)) {
+            showError(this, receiptNumberError, 'Receipt number is required');
+            validationState.receiptNumber = false;
+        } else if (!validateReceiptNumber(value)) {
+            showError(this, receiptNumberError, 'Receipt number must be at least 5 characters long');
+            validationState.receiptNumber = false;
+        } else {
+            showSuccess(this, receiptNumberError);
+            validationState.receiptNumber = true;
+        }
+        updateFormValidation();
+    });
+
+    // Payment date validation
+    paymentDateInput.addEventListener('change', function() {
+        const value = this.value;
+        
+        if (!validateDate(value)) {
+            showError(this, paymentDateError, 'Please enter a valid payment date (cannot be in the future)');
+            validationState.paymentDate = false;
+        } else {
+            showSuccess(this, paymentDateError);
+            validationState.paymentDate = true;
+        }
+        updateFormValidation();
+    });
+
+    // Payer name validation
+    payerNameInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateRequired(value)) {
+            clearError(this, payerNameError);
+            validationState.payerName = false;
+        } else if (!validateName(value)) {
+            showError(this, payerNameError, 'Please enter a valid payer name');
+            validationState.payerName = false;
+        } else {
+            showSuccess(this, payerNameError);
+            validationState.payerName = true;
+        }
+        updateFormValidation();
+    });
+
+    payerNameInput.addEventListener('blur', function() {
+        const value = this.value.trim();
+        if (!validateRequired(value)) {
+            showError(this, payerNameError, 'Payer name is required');
+            validationState.payerName = false;
+            updateFormValidation();
+        }
+    });
+
+    // Email validation
+    payerEmailInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateRequired(value)) {
+            clearError(this, payerEmailError);
+            validationState.payerEmail = false;
+        } else if (!validateEmail(value)) {
+            showError(this, payerEmailError, 'Please enter a valid email address');
+            validationState.payerEmail = false;
+        } else {
+            showSuccess(this, payerEmailError);
+            validationState.payerEmail = true;
+        }
+        updateFormValidation();
+    });
+
+    payerEmailInput.addEventListener('blur', function() {
+        const value = this.value.trim();
+        if (!validateRequired(value)) {
+            showError(this, payerEmailError, 'Payer email is required');
+            validationState.payerEmail = false;
+            updateFormValidation();
+        }
+    });
+
+    // Phone validation (optional)
+    payerPhoneInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (value === '') {
+            clearError(this, payerPhoneError);
+            validationState.payerPhone = true; // Optional field
+        } else if (!validatePhone(value)) {
+            showError(this, payerPhoneError, 'Please enter a valid phone number');
+            validationState.payerPhone = false;
+        } else {
+            showSuccess(this, payerPhoneError);
+            validationState.payerPhone = true;
+        }
+        updateFormValidation();
+    });
+
+    // Company validation (optional)
+    payerCompanyInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateCompanyName(value)) {
+            showError(this, payerCompanyError, 'Company name must be 2-100 characters if provided');
+            validationState.payerCompany = false;
+        } else {
+            if (value === '') {
+                clearError(this, payerCompanyError);
+            } else {
+                showSuccess(this, payerCompanyError);
+            }
+            validationState.payerCompany = true;
+        }
+        updateFormValidation();
+    });
+
+    // Address validation (optional)
+    payerAddressInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (value === '') {
+            clearError(this, payerAddressError);
+            validationState.payerAddress = true; // Optional field
+        } else if (value.length < 10) {
+            showError(this, payerAddressError, 'Address should be at least 10 characters long');
+            validationState.payerAddress = false;
+        } else {
+            showSuccess(this, payerAddressError);
+            validationState.payerAddress = true;
+        }
+        updateFormValidation();
+    });
+
+    // Payment method validation
+    paymentMethodSelect.addEventListener('change', function() {
+        const value = this.value;
+        
+        if (!validateRequired(value)) {
+            showError(this, paymentMethodError, 'Please select a payment method');
+            validationState.paymentMethod = false;
+        } else {
+            showSuccess(this, paymentMethodError);
+            validationState.paymentMethod = true;
+        }
+        updateFormValidation();
+    });
+
+    // Payment details validation (optional)
+    paymentDetailsInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (value === '') {
+            clearError(this, paymentDetailsError);
+            validationState.paymentDetails = true; // Optional field
+        } else if (value.length < 5) {
+            showError(this, paymentDetailsError, 'Payment details should be at least 5 characters');
+            validationState.paymentDetails = false;
+        } else {
+            showSuccess(this, paymentDetailsError);
+            validationState.paymentDetails = true;
+        }
+        updateFormValidation();
+    });
+
+    // Transaction ID validation (optional)
+    transactionIdInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateTransactionId(value)) {
+            showError(this, transactionIdError, 'Transaction ID must be 5-50 characters if provided');
+            validationState.transactionId = false;
+        } else {
+            if (value === '') {
+                clearError(this, transactionIdError);
+            } else {
+                showSuccess(this, transactionIdError);
+            }
+            validationState.transactionId = true;
+        }
+        updateFormValidation();
+    });
+
+    // Related invoice validation (optional)
+    relatedInvoiceInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (!validateInvoiceNumber(value)) {
+            showError(this, relatedInvoiceError, 'Please enter a valid invoice number (e.g., INV-2025-01-001)');
+            validationState.relatedInvoice = false;
+        } else {
+            if (value === '') {
+                clearError(this, relatedInvoiceError);
+            } else {
+                showSuccess(this, relatedInvoiceError);
+            }
+            validationState.relatedInvoice = true;
+        }
+        updateFormValidation();
+    });
+}
 
 function generateReceiptNumber() {
     const date = new Date();
@@ -509,12 +852,25 @@ function addItem() {
     items.push(item);
     updateItemsDisplay();
     calculateTotals();
+    validateItems();
 }
 
 function removeItem(id) {
     items = items.filter(item => item.id !== id);
     updateItemsDisplay();
     calculateTotals();
+    validateItems();
+}
+
+function validateItems() {
+    const hasValidItems = items.length > 0 && items.some(item => 
+        item.description.trim().length > 0 && 
+        item.quantity > 0 && 
+        item.rate >= 0
+    );
+    
+    validationState.items = hasValidItems;
+    updateFormValidation();
 }
 
 function updateItemsDisplay() {
@@ -536,14 +892,18 @@ function updateItemsDisplay() {
                        value="${item.description}"
                        placeholder="Product or service description"
                        class="input input-bordered input-sm w-full"
-                       onchange="updateItem(${item.id}, 'description', this.value)">
+                       onchange="updateItem(${item.id}, 'description', this.value)"
+                       onblur="validateItemDescription(this, ${item.id})">
+                <div id="itemDesc${item.id}Error" class="text-error text-xs mt-1 hidden"></div>
             </td>
             <td>
                 <input type="number" 
                        value="${item.quantity}"
                        min="1"
                        class="input input-bordered input-sm w-full text-center"
-                       onchange="updateItem(${item.id}, 'quantity', parseFloat(this.value) || 1)">
+                       onchange="updateItem(${item.id}, 'quantity', parseFloat(this.value) || 1)"
+                       onblur="validateItemQuantity(this, ${item.id})">
+                <div id="itemQty${item.id}Error" class="text-error text-xs mt-1 hidden"></div>
             </td>
             <td>
                 <input type="number" 
@@ -551,7 +911,9 @@ function updateItemsDisplay() {
                        min="0"
                        step="0.01"
                        class="input input-bordered input-sm w-full text-right"
-                       onchange="updateItem(${item.id}, 'rate', parseFloat(this.value) || 0)">
+                       onchange="updateItem(${item.id}, 'rate', parseFloat(this.value) || 0)"
+                       onblur="validateItemRate(this, ${item.id})">
+                <div id="itemRate${item.id}Error" class="text-error text-xs mt-1 hidden"></div>
             </td>
             <td class="text-right font-medium">$${item.amount.toFixed(2)}</td>
             <td class="text-center">
@@ -563,6 +925,48 @@ function updateItemsDisplay() {
             </td>
         </tr>
     `).join('');
+    
+    validateItems();
+}
+
+function validateItemDescription(input, itemId) {
+    const errorElement = document.getElementById(`itemDesc${itemId}Error`);
+    const value = input.value.trim();
+    
+    if (!value) {
+        showError(input, errorElement, 'Description required');
+    } else if (value.length < 3) {
+        showError(input, errorElement, 'Description too short');
+    } else {
+        showSuccess(input, errorElement);
+    }
+    validateItems();
+}
+
+function validateItemQuantity(input, itemId) {
+    const errorElement = document.getElementById(`itemQty${itemId}Error`);
+    const value = parseFloat(input.value);
+    
+    if (!value || value < 1) {
+        showError(input, errorElement, 'Quantity must be at least 1');
+        input.value = 1;
+    } else {
+        showSuccess(input, errorElement);
+    }
+    validateItems();
+}
+
+function validateItemRate(input, itemId) {
+    const errorElement = document.getElementById(`itemRate${itemId}Error`);
+    const value = parseFloat(input.value);
+    
+    if (isNaN(value) || value < 0) {
+        showError(input, errorElement, 'Rate must be 0 or greater');
+        input.value = 0;
+    } else {
+        showSuccess(input, errorElement);
+    }
+    validateItems();
 }
 
 function updateItem(id, field, value) {
@@ -593,25 +997,70 @@ function calculateTotals() {
     document.getElementById('total-display').textContent = `$${total.toFixed(2)}`;
 }
 
+function validateForm() {
+    let hasErrors = false;
+    
+    // Validate all required fields
+    if (!validateRequired(receiptNumberInput.value)) {
+        showError(receiptNumberInput, receiptNumberError, 'Receipt number is required');
+        hasErrors = true;
+    }
+    
+    if (!validateDate(paymentDateInput.value)) {
+        showError(paymentDateInput, paymentDateError, 'Please enter a valid payment date');
+        hasErrors = true;
+    }
+    
+    if (!validateRequired(payerNameInput.value)) {
+        showError(payerNameInput, payerNameError, 'Payer name is required');
+        hasErrors = true;
+    }
+    
+    if (!validateRequired(payerEmailInput.value)) {
+        showError(payerEmailInput, payerEmailError, 'Payer email is required');
+        hasErrors = true;
+    } else if (!validateEmail(payerEmailInput.value)) {
+        showError(payerEmailInput, payerEmailError, 'Please enter a valid email address');
+        hasErrors = true;
+    }
+    
+    if (!validateRequired(paymentMethodSelect.value)) {
+        showError(paymentMethodSelect, paymentMethodError, 'Please select a payment method');
+        hasErrors = true;
+    }
+    
+    if (items.length === 0) {
+        alert('Please add at least one item to the receipt');
+        hasErrors = true;
+    }
+    
+    return !hasErrors;
+}
+
 function previewReceipt() {
+    if (!validateForm()) {
+        alert('Please fix all validation errors before previewing the receipt');
+        return;
+    }
+    
     const preview = generatePreviewHTML();
     document.getElementById('receipt-preview').innerHTML = preview;
     document.getElementById('previewModal').showModal();
 }
 
 function generatePreviewHTML() {
-    const receiptNumber = document.getElementById('receipt_number').value;
-    const paymentDate = document.getElementById('payment_date').value;
+    const receiptNumber = receiptNumberInput.value;
+    const paymentDate = paymentDateInput.value;
     const status = document.getElementById('payment_status').value;
-    const payerName = document.getElementById('payer_name').value;
-    const payerEmail = document.getElementById('payer_email').value;
-    const payerPhone = document.getElementById('payer_phone').value;
-    const payerCompany = document.getElementById('payer_company').value;
-    const payerAddress = document.getElementById('payer_address').value;
-    const paymentMethod = document.getElementById('payment_method').value;
-    const paymentDetails = document.getElementById('payment_details').value;
-    const transactionId = document.getElementById('transaction_id').value;
-    const relatedInvoice = document.getElementById('related_invoice').value;
+    const payerName = payerNameInput.value;
+    const payerEmail = payerEmailInput.value;
+    const payerPhone = payerPhoneInput.value;
+    const payerCompany = payerCompanyInput.value;
+    const payerAddress = payerAddressInput.value;
+    const paymentMethod = paymentMethodSelect.value;
+    const paymentDetails = paymentDetailsInput.value;
+    const transactionId = transactionIdInput.value;
+    const relatedInvoice = relatedInvoiceInput.value;
     const notes = document.getElementById('receipt_notes').value;
     
     const subtotal = items.reduce((sum, item) => sum + item.amount, 0);
@@ -647,6 +1096,231 @@ function generatePreviewHTML() {
         ` : ''}
         
         <!-- Header -->
+        <div class="flex justify-between items-start mb-8 pb-8 border-b-2 border-gray-200">
+            <div>
+                <div class="flex items-center gap-3 mb-4">
+                    <img src="{% static 'billingapp/images/logo.svg' %}" alt="PixelCrafte" class="h-12 w-12">
+                    <div>
+                        <h2 class="text-2xl font-bold text-main">PixelCrafte</h2>
+                        <p class="text-gray-600">Professional Billing Solutions</p>
+                    </div>
+                </div>
+                <div class="text-gray-600">
+                    <p>123 Business Avenue</p>
+                    <p>City, State 12345</p>
+                    <p>contact@pixelcrafte.com</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <div class="flex items-center justify-end gap-3 mb-4">
+                    <h1 class="text-4xl font-bold text-gray-800">RECEIPT</h1>
+                    <span class="px-3 py-1 rounded-full text-xs font-medium border-2 ${statusColors[status]}">${statusText[status]}</span>
+                </div>
+                <div class="space-y-1 text-sm">
+                    <div><span class="font-semibold">Receipt #:</span> ${receiptNumber}</div>
+                    <div><span class="font-semibold">Payment Date:</span> ${new Date(paymentDate).toLocaleDateString()}</div>
+                    ${transactionId ? `<div><span class="font-semibold">Transaction ID:</span> ${transactionId}</div>` : ''}
+                    ${relatedInvoice ? `<div><span class="font-semibold">Related Invoice:</span> ${relatedInvoice}</div>` : ''}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Payment Details -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <!-- Paid By -->
+            <div>
+                <h3 class="font-semibold text-gray-500 mb-2">PAID BY:</h3>
+                <div class="text-gray-800">
+                    <div class="font-bold text-lg">${payerName || 'Customer Name'}</div>
+                    ${payerCompany ? `<div>${payerCompany}</div>` : ''}
+                    ${payerEmail ? `<div>${payerEmail}</div>` : ''}
+                    ${payerPhone ? `<div>${payerPhone}</div>` : ''}
+                    ${payerAddress ? `<div class="whitespace-pre-line">${payerAddress}</div>` : ''}
+                </div>
+            </div>
+            
+            <!-- Payment Method -->
+            <div>
+                <h3 class="font-semibold text-gray-500 mb-2">PAYMENT METHOD:</h3>
+                <div class="text-gray-800">
+                    <div class="font-bold text-lg">${document.querySelector('#payment_method option:checked')?.textContent || 'Payment Method'}</div>
+                    ${paymentDetails ? `<div>${paymentDetails}</div>` : ''}
+                    <div class="text-sm text-gray-600 mt-2">Status: <span class="font-medium ${status === 'completed' ? 'text-green-600' : status === 'pending' ? 'text-yellow-600' : 'text-red-600'}">${statusText[status]}</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Items Table -->
+        <div class="mb-8">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-main text-white">
+                        <th class="text-left p-3">Description</th>
+                        <th class="text-center p-3 w-20">Qty</th>
+                        <th class="text-right p-3 w-24">Rate</th>
+                        <th class="text-right p-3 w-24">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${items.map(item => `
+                        <tr class="border-b">
+                            <td class="p-3">${item.description || 'Item description'}</td>
+                            <td class="p-3 text-center">${item.quantity}</td>
+                            <td class="p-3 text-right">$${item.rate.toFixed(2)}</td>
+                            <td class="p-3 text-right font-medium">$${item.amount.toFixed(2)}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Totals -->
+        <div class="flex justify-end mb-8">
+            <div class="w-64 space-y-2">
+                <div class="flex justify-between"><span>Subtotal:</span><span>$${subtotal.toFixed(2)}</span></div>
+                ${discountPercent > 0 ? `<div class="flex justify-between text-red-600"><span>Discount (${discountPercent}%):</span><span>-$${discountAmount.toFixed(2)}</span></div>` : ''}
+                ${taxPercent > 0 ? `<div class="flex justify-between"><span>Tax (${taxPercent}%):</span><span>$${taxAmount.toFixed(2)}</span></div>` : ''}
+                <div class="bg-faded p-3 rounded-lg border-2 border-main">
+                    <div class="flex justify-between text-xl font-bold text-main">
+                        <span>AMOUNT PAID:</span><span>$${total.toFixed(2)}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Notes -->
+        ${notes ? `
+            <div class="mb-8">
+                <h4 class="font-semibold text-gray-500 mb-2">NOTES:</h4>
+                <div class="text-gray-700 whitespace-pre-line">${notes}</div>
+            </div>
+        ` : ''}
+        
+        <!-- Footer -->
+        <div class="mt-8 pt-8 border-t text-center">
+            <h3 class="text-2xl font-bold text-main mb-2">Thank You!</h3>
+            <p class="text-gray-600">We appreciate your business and prompt payment.</p>
+        </div>
+    `;
+}
+
+function printReceipt() {
+    const printWindow = window.open('', '_blank');
+    const previewContent = document.getElementById('receipt-preview').innerHTML;
+    
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Receipt - ${receiptNumberInput.value}</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; position: relative; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { padding: 8px; border-bottom: 1px solid #ddd; }
+                th { background-color: #5129CE; color: white; }
+                .text-right { text-align: right; }
+                .text-center { text-align: center; }
+                .font-bold { font-weight: bold; }
+                .mb-8 { margin-bottom: 2rem; }
+                .mb-4 { margin-bottom: 1rem; }
+                .mb-2 { margin-bottom: 0.5rem; }
+                .border-b-2 { border-bottom: 2px solid #e5e7eb; }
+                .pb-8 { padding-bottom: 2rem; }
+                .pt-2 { padding-top: 0.5rem; }
+                .space-y-1 > * + * { margin-top: 0.25rem; }
+                .space-y-2 > * + * { margin-top: 0.5rem; }
+                .whitespace-pre-line { white-space: pre-line; }
+                .absolute { position: absolute; }
+                .transform { transform: rotate(12deg); }
+                .z-10 { z-index: 10; }
+                .bg-faded { background-color: #EBE4FE; }
+                .border-main { border-color: #5129CE; }
+                .text-main { color: #5129CE; }
+            </style>
+        </head>
+        <body>
+            ${previewContent}
+        </body>
+        </html>
+    `);
+    
+    printWindow.document.close();
+    printWindow.print();
+}
+
+function saveReceipt() {
+    if (!validateForm()) {
+        alert('Please fix all validation errors before saving the receipt');
+        return;
+    }
+    
+    // Implementation for saving receipt
+    alert('Receipt saved successfully!');
+}
+
+function emailReceipt() {
+    const email = payerEmailInput.value;
+    if (!email) {
+        alert('Please enter a payer email address first.');
+        return;
+    }
+    alert(`Receipt will be emailed to: ${email}`);
+    document.getElementById('previewModal').close();
+}
+
+function clearReceipt() {
+    if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+        // Clear all form fields
+        receiptNumberInput.value = generateReceiptNumber();
+        payerNameInput.value = '';
+        payerEmailInput.value = '';
+        payerPhoneInput.value = '';
+        payerCompanyInput.value = '';
+        payerAddressInput.value = '';
+        paymentMethodSelect.value = '';
+        paymentDetailsInput.value = '';
+        transactionIdInput.value = '';
+        relatedInvoiceInput.value = '';
+        document.getElementById('receipt_notes').value = '';
+        document.getElementById('discount_percent').value = '';
+        document.getElementById('tax_percent').value = '';
+        document.getElementById('payment_status').value = 'completed';
+        
+        // Clear all error states
+        const errorElements = document.querySelectorAll('[id$="Error"]');
+        errorElements.forEach(el => el.classList.add('hidden'));
+        
+        const inputs = document.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            input.classList.remove('input-error', 'border-error', 'border-success');
+        });
+        
+        // Reset validation state
+        validationState = {
+            receiptNumber: true,
+            paymentDate: true,
+            payerName: false,
+            payerEmail: false,
+            payerPhone: true,
+            payerCompany: true,
+            payerAddress: true,
+            paymentMethod: false,
+            paymentDetails: true,
+            transactionId: true,
+            relatedInvoice: true,
+            items: false
+        };
+        
+        // Clear items
+        items = [];
+        itemCounter = 0;
+        updateItemsDisplay();
+        calculateTotals();
+        updateStatusBadge();
+        updateFormValidation();
+    }
+}
+</script>
         <div class="flex justify-between items-start mb-8 pb-8 border-b-2 border-gray-200">
             <div>
                 <div class="flex items-center gap-3 mb-4">
