@@ -20,6 +20,9 @@
     <!-- Header -->
     <div class="header grid grid-cols-2 gap-8 mb-8" style="border-bottom: 2px solid #eee; padding-bottom: 1rem;">
         <div>
+            {% if data.company.logo_path %}
+                <img src="{{ data.company.logo_path }}" alt="{{ data.company.name }} Logo" style="max-height: 50px; margin-bottom: 1rem;">
+            {% endif %}
             <h1 class="brand-color" style="font-size: 2rem; margin: 0;">{{ data.company.name }}</h1>
             <p>{{ data.company.tagline }}</p>
         </div>
