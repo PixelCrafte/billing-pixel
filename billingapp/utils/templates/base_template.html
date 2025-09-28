@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ data.document_title }}</title>
+    <style>
+        /* Basic layout styles - more in dynamic CSS */
+        .grid { display: grid; }
+        .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .gap-8 { gap: 2rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .text-right { text-align: right; }
+        .w-full { width: 100%; }
+        .table { border-collapse: collapse; width: 100%; }
+        .table th, .table td { padding: 0.75rem; border-bottom: 1px solid #eee; }
+        .font-bold { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header grid grid-cols-2 gap-8 mb-8" style="border-bottom: 2px solid #eee; padding-bottom: 1rem;">
+        <div>
+            <h1 class="brand-color" style="font-size: 2rem; margin: 0;">{{ data.company.name }}</h1>
+            <p>{{ data.company.tagline }}</p>
+        </div>
+        <div class="text-right">
+            <h2 style="font-size: 2.5rem; margin: 0;">{{ data.document_type|upper }}</h2>
+            <p>#{{ data.document_number }}</p>
+        </div>
+    </div>
+
+    <!-- Client & Document Info -->
+    <div class="grid grid-cols-2 gap-8 mb-8">
+        <div>
+            <h3 style="color: #888; font-size: 0.9rem; margin-bottom: 0.5rem;">{{ data.client_section_title }}</h3>
+            <p class="font-bold">{{ data.client.name }}</p>
+            <p>{{ data.client.email }}</p>
+            {% if data.client.address %}<p>{{ data.client.address|replace('\n', '<br>')|safe }}</p>{% endif %}
+        </div>
+        <div class="text-right">
+            {% for field in data.document_fields %}
+            <p><strong>{{ field.label }}:</strong> {{ field.value }}</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Items Table -->
+    <div class="mb-8">
+        <table class="table">
+            <thead>
+                <tr class="brand-bg">
+                    <th>Description</th>
+                    <th class="text-right">Quantity</th>
+                    <th class="text-right">Rate</th>
+                    <th class="text-right">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in data['items'] %}
+                <tr>
+                    <td>{{ item.description }}</td>
+                    <td class="text-right">{{ item.quantity }}</td>
+                    <td class="text-right">{{ item.rate|currency }}</td>
+                    <td class="text-right">{{ item.amount|currency }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Totals Section -->
+    <div style="display: flex; justify-content: flex-end;" class="mb-8">
+        <div style="width: 40%;">
+            {% for total in data['totals'] %}
+            <div class="grid grid-cols-2 gap-8 total-line" style="padding: 0.5rem;">
+                <span>{{ total.label }}</span>
+                <span class="text-right">{{ total.value }}</span>
+            </div>
+            {% endfor %}
+            <div class="grid grid-cols-2 gap-8 total-line brand-total" style="padding: 0.75rem; margin-top: 0.5rem;">
+                <strong class="total-amount">{{ data.final_total.label }}</strong>
+                <strong class="text-right total-amount">{{ data.final_total.value }}</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes -->
+    {% if data.notes %}
+    <div class="mb-8">
+        <h4 style="color: #888; font-size: 0.9rem; margin-bottom: 0.5rem;">Notes</h4>
+        <p style="font-size: 0.9rem;">{{ data.notes|replace('\n', '<br>')|safe }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Footer -->
+    <div class="footer" style="text-align: center; border-top: 1px solid #eee; padding-top: 1rem; margin-top: 2rem;">
+        <p>{{ data.footer_text }}</p>
+        <p style="font-size: 0.8rem;">{{ data.company.name }} | {{ data.company.email }} | {{ data.company.website }}</p>
+    </div>
+</body>
+</html>
